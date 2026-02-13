@@ -101,6 +101,56 @@
             position: relative;
         }
         
+        .requirements {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            padding: 20px;
+            border-bottom: 2px solid #ffc107;
+            text-align: center;
+        }
+        
+        .requirements p {
+            color: #856404;
+            font-weight: 500;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .requirements p i {
+            color: #856404;
+            margin-right: 8px;
+        }
+        
+        .community-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .community-link {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #667eea;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .community-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .community-link i {
+            font-size: 1.2em;
+        }
+        
         .content {
             padding: 30px;
         }
@@ -238,6 +288,16 @@
                 padding: 12px 15px;
                 font-size: 0.95em;
             }
+            
+            .community-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .community-link {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -247,6 +307,24 @@
             <i class="fas fa-gamepad"></i>
             <h1>Школьные игры</h1>
             <p>Выбери игру и найди команду</p>
+        </div>
+        
+        <!-- Блок с требованиями подписки -->
+        <div class="requirements">
+            <p>
+                <i class="fas fa-exclamation-circle"></i>
+                Для участия необходимо подписаться на эти сообщества
+            </p>
+            <div class="community-links">
+                <a href="https://vk.com/colizeum_kolhoznaya" target="_blank" class="community-link">
+                    <i class="fab fa-vk"></i>
+                    Colizeum
+                </a>
+                <a href="https://vk.com/cyberleague67" target="_blank" class="community-link">
+                    <i class="fab fa-vk"></i>
+                    КиберЛига
+                </a>
+            </div>
         </div>
         
         <div class="content">
@@ -388,9 +466,9 @@
                 
                 // Проверяем подписку на оба сообщества
                 if (!subs || !subs.colizeum || !subs.cyber) {
-                    let message = "❌ Для отправки анкеты нужно подписаться на:\n";
-                    if (!subs?.colizeum) message += "• https://vk.com/colizeum_kolhoznaya\n";
-                    if (!subs?.cyber) message += "• https://vk.com/cyberleague67\n";
+                    let message = "❌ Для участия необходимо подписаться на:\n";
+                    if (!subs?.colizeum) message += "• Colizeum: https://vk.com/colizeum_kolhoznaya\n";
+                    if (!subs?.cyber) message += "• КиберЛига: https://vk.com/cyberleague67\n";
                     
                     alert(message);
                     

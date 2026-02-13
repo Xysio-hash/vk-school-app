@@ -68,7 +68,7 @@ async function sendData() {
             date: new Date().toISOString()
         };
 
-        await fetch("http://localhost:3000/save", {
+        await fetch("https://vk-school-app-server.onrender.com/save", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

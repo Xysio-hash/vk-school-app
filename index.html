@@ -377,7 +377,18 @@
                 button.disabled = true;
                 
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
+                
+                // Запрашиваем телефон с обработкой отказа
+                let phoneData;
+                try {
+                    phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
+                } catch (phoneError) {
+                    // Если пользователь отказался дать телефон
+                    alert("📱 Для записи на турнир вам нужно поделиться телефоном");
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    return;
+                }
                 
                 const payload = {
                     vk_id: user.id,
@@ -407,7 +418,7 @@
                 }
                 
             } catch (error) {
-                alert("❌ Ошибка. Попробуй ещё раз или разреши доступ к телефону");
+                alert("❌ Ошибка. Попробуй ещё раз");
                 console.error(error);
             } finally {
                 // Возвращаем кнопку в исходное состояние

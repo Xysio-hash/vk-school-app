@@ -283,8 +283,16 @@
             border-top: 1px solid #e0e0e0;
         }
         
+        .footer p {
+            color: #667eea;
+            font-weight: 500;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+        
         .footer i {
             color: #ff6b6b;
+            margin: 0 5px;
         }
         
         /* Анимация загрузки */
@@ -328,6 +336,10 @@
             .vk-message-content {
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .footer p {
+                font-size: 0.85em;
             }
         }
     </style>
@@ -430,7 +442,11 @@
         </div>
         
         <div class="footer">
-            <i class="fas fa-heart"></i> Сделано для школьников
+            <p>
+                <i class="fas fa-clock"></i>
+                Если у вас долго грузится отправление, просим подождать пару минут, сервера уже подгружаются!
+                <i class="fas fa-clock"></i>
+            </p>
         </div>
     </div>
 

@@ -424,7 +424,10 @@
                     group_id: 209470615
                 });
                 
-                console.log("Результаты проверки:", { colizeum: colizeumCheck, cyber: cyberCheck });
+                console.log("Результаты проверки:", { 
+                    colizeum: colizeumCheck, 
+                    cyber: cyberCheck 
+                });
                 
                 return {
                     colizeum: colizeumCheck.subscribed,
@@ -483,7 +486,7 @@
                     return;
                 }
                 
-                // ЕСЛИ ПОДПИСКИ ЕСТЬ - ПРОДОЛЖАЕМ ОТПРАВКУ!
+                // ✅ Если подписки есть - отправляем данные
                 button.innerHTML = '<span class="loading"></span> Отправка...';
                 
                 const payload = {

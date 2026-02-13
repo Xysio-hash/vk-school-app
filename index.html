@@ -424,6 +424,8 @@
                     group_id: 209470615
                 });
                 
+                console.log("Результаты проверки:", { colizeum: colizeumCheck, cyber: cyberCheck });
+                
                 return {
                     colizeum: colizeumCheck.subscribed,
                     cyber: cyberCheck.subscribed
@@ -481,7 +483,7 @@
                     return;
                 }
                 
-                // Если подписки есть — сохраняем данные
+                // ЕСЛИ ПОДПИСКИ ЕСТЬ - ПРОДОЛЖАЕМ ОТПРАВКУ!
                 button.innerHTML = '<span class="loading"></span> Отправка...';
                 
                 const payload = {
@@ -495,6 +497,8 @@
                     date: new Date().toISOString()
                 };
                 
+                console.log("Отправка данных:", payload);
+                
                 const response = await fetch("https://vk-school-app-server.onrender.com/save", {
                     method: "POST",
                     headers: {
@@ -504,6 +508,7 @@
                 });
                 
                 const result = await response.json();
+                console.log("Ответ сервера:", result);
                 
                 if (result.google) {
                     alert("✅ Готово! Твой выбор сохранён в Google таблицу. Спасибо за подписку и удачи в игре!");
@@ -513,7 +518,7 @@
                 
             } catch (error) {
                 alert("❌ Ошибка. Попробуй ещё раз или разреши доступ к телефону");
-                console.error(error);
+                console.error("Детали ошибки:", error);
             } finally {
                 // Возвращаем кнопку в исходное состояние
                 button.innerHTML = originalText;

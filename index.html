@@ -122,12 +122,8 @@
             color: #667eea;
         }
         
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-        
-        .custom-select select {
+        /* Компактный выпадающий список для школ */
+        .compact-select {
             width: 100%;
             padding: 15px 20px;
             border: 2px solid #e0e0e0;
@@ -137,29 +133,28 @@
             color: #333;
             cursor: pointer;
             appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
             transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
         }
-        
-        .custom-select select:hover {
+
+        .compact-select:hover {
             border-color: #667eea;
         }
-        
-        .custom-select select:focus {
+
+        .compact-select:focus {
             outline: none;
             border-color: #764ba2;
             box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
         }
-        
-        .custom-select::after {
-            content: '\f078';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            pointer-events: none;
+
+        .compact-select option {
+            padding: 12px;
+            font-size: 1em;
         }
         
         select[multiple] {
@@ -213,18 +208,6 @@
             font-size: 1.2em;
         }
         
-        .game-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            border-radius: 20px;
-            color: #667eea;
-            font-size: 0.9em;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #667eea40;
-        }
-        
         .footer {
             text-align: center;
             padding: 20px;
@@ -270,6 +253,11 @@
             .header h1 {
                 font-size: 1.5em;
             }
+            
+            .compact-select {
+                padding: 12px 15px;
+                font-size: 0.95em;
+            }
         }
     </style>
 </head>
@@ -287,53 +275,52 @@
                     <i class="fas fa-school"></i>
                     Выберите школу
                 </label>
-                <div class="custom-select">
-                    <select id="school" size="8" style="height: auto;">
-                        <option value="1">МБОУ "Средняя школа №1"</option>
-                        <option value="2">МБОУ "Средняя школа №2"</option>
-                        <option value="3">МБОУ "Средняя школа №3"</option>
-                        <option value="4">МБОУ "Гимназия №4"</option>
-                        <option value="5">МБОУ "Средняя школа №5"</option>
-                        <option value="6">МБОУ "Средняя школа №6"</option>
-                        <option value="7">МБОУ "Средняя школа №7"</option>
-                        <option value="8">МБОУ "Средняя школа №8 с углубленным изучением иностранных языков"</option>
-                        <option value="9">МБОУ "Средняя школа №9 им. Ю.А. Гагарина"</option>
-                        <option value="10">МБОУ "Средняя школа №10"</option>
-                        <option value="11">МБОУ "Средняя школа №12"</option>
-                        <option value="12">МБОУ "Средняя школа №13 им. Э.Д. Балтина"</option>
-                        <option value="13">МБОУ "Средняя школа №14"</option>
-                        <option value="14">МБОУ "Средняя школа №15"</option>
-                        <option value="15">МБОУ "Средняя школа №16"</option>
-                        <option value="16">МБОУ "Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова"</option>
-                        <option value="17">МБОУ "Центр образования №2 "Гнездово"</option>
-                        <option value="18">МБОУ "Средняя школа №19 им. Героя России Панова"</option>
-                        <option value="19">МБОУ "Лицей №1 им. академика Б.Н. Петрова"</option>
-                        <option value="20">МБОУ "Средняя школа №21 им. Н.И. Рыленкова"</option>
-                        <option value="21">МБОУ "Средняя школа №22"</option>
-                        <option value="22">МБОУ "Средняя школа №23"</option>
-                        <option value="23">МБОУ "Средняя школа №24"</option>
-                        <option value="24">МБОУ "Средняя школа №25"</option>
-                        <option value="25">МБОУ "Средняя школа №26 им. А.С. Пушкина"</option>
-                        <option value="26">МБОУ "Средняя школа №27 им. Э.А. Хиля"</option>
-                        <option value="27">МБОУ "Средняя школа №28"</option>
-                        <option value="28">МБОУ "Средняя школа №29 с углубленным изучением отдельных предметов"</option>
-                        <option value="29">МБОУ "Средняя школа №30 им. С.А. Железнова"</option>
-                        <option value="30">МБОУ "Средняя школа №31"</option>
-                        <option value="31">МБОУ "Центр образования №3 "Звездный"</option>
-                        <option value="32">МБОУ "Средняя школа №33"</option>
-                        <option value="33">МБОУ "Центр образования №4 "Перспектива"</option>
-                        <option value="34">МБОУ "Средняя школа №35"</option>
-                        <option value="35">МБОУ "Средняя школа №36"</option>
-                        <option value="36">МБОУ "Средняя школа №37"</option>
-                        <option value="37">МБОУ "Средняя школа №38"</option>
-                        <option value="38">МБОУ "Средняя школа №39"</option>
-                        <option value="39">МБОУ "Центр образования №1 "Академия детства"</option>
-                        <option value="40">МБОУ "Открытая (сменная) школа №1"</option>
-                        <option value="41">МБОУ "Открытая (сменная) школа №2"</option>
-                        <option value="42">МБОУ "Гимназия №1 им. Н.М. Пржевальского"</option>
-                        <option value="43">МБОУ "Многопрофильный лицей"</option>
-                    </select>
-                </div>
+                <select id="school" class="compact-select">
+                    <option value="" disabled selected>🏫 Выберите школу</option>
+                    <option value="1">МБОУ "Средняя школа №1"</option>
+                    <option value="2">МБОУ "Средняя школа №2"</option>
+                    <option value="3">МБОУ "Средняя школа №3"</option>
+                    <option value="4">МБОУ "Гимназия №4"</option>
+                    <option value="5">МБОУ "Средняя школа №5"</option>
+                    <option value="6">МБОУ "Средняя школа №6"</option>
+                    <option value="7">МБОУ "Средняя школа №7"</option>
+                    <option value="8">МБОУ "Средняя школа №8 с углубленным изучением иностранных языков"</option>
+                    <option value="9">МБОУ "Средняя школа №9 им. Ю.А. Гагарина"</option>
+                    <option value="10">МБОУ "Средняя школа №10"</option>
+                    <option value="11">МБОУ "Средняя школа №12"</option>
+                    <option value="12">МБОУ "Средняя школа №13 им. Э.Д. Балтина"</option>
+                    <option value="13">МБОУ "Средняя школа №14"</option>
+                    <option value="14">МБОУ "Средняя школа №15"</option>
+                    <option value="15">МБОУ "Средняя школа №16"</option>
+                    <option value="16">МБОУ "Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова"</option>
+                    <option value="17">МБОУ "Центр образования №2 "Гнездово"</option>
+                    <option value="18">МБОУ "Средняя школа №19 им. Героя России Панова"</option>
+                    <option value="19">МБОУ "Лицей №1 им. академика Б.Н. Петрова"</option>
+                    <option value="20">МБОУ "Средняя школа №21 им. Н.И. Рыленкова"</option>
+                    <option value="21">МБОУ "Средняя школа №22"</option>
+                    <option value="22">МБОУ "Средняя школа №23"</option>
+                    <option value="23">МБОУ "Средняя школа №24"</option>
+                    <option value="24">МБОУ "Средняя школа №25"</option>
+                    <option value="25">МБОУ "Средняя школа №26 им. А.С. Пушкина"</option>
+                    <option value="26">МБОУ "Средняя школа №27 им. Э.А. Хиля"</option>
+                    <option value="27">МБОУ "Средняя школа №28"</option>
+                    <option value="28">МБОУ "Средняя школа №29 с углубленным изучением отдельных предметов"</option>
+                    <option value="29">МБОУ "Средняя школа №30 им. С.А. Железнова"</option>
+                    <option value="30">МБОУ "Средняя школа №31"</option>
+                    <option value="31">МБОУ "Центр образования №3 "Звездный"</option>
+                    <option value="32">МБОУ "Средняя школа №33"</option>
+                    <option value="33">МБОУ "Центр образования №4 "Перспектива"</option>
+                    <option value="34">МБОУ "Средняя школа №35"</option>
+                    <option value="35">МБОУ "Средняя школа №36"</option>
+                    <option value="36">МБОУ "Средняя школа №37"</option>
+                    <option value="37">МБОУ "Средняя школа №38"</option>
+                    <option value="38">МБОУ "Средняя школа №39"</option>
+                    <option value="39">МБОУ "Центр образования №1 "Академия детства"</option>
+                    <option value="40">МБОУ "Открытая (сменная) школа №1"</option>
+                    <option value="41">МБОУ "Открытая (сменная) школа №2"</option>
+                    <option value="42">МБОУ "Гимназия №1 им. Н.М. Пржевальского"</option>
+                    <option value="43">МБОУ "Многопрофильный лицей"</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -341,16 +328,15 @@
                     <i class="fas fa-gamepad"></i>
                     Выберите игру
                 </label>
-                <div class="custom-select">
-                    <select id="game">
-                        <option value="ks_2x2">🎮 КС (2x2)</option>
-                        <option value="ks_5x5">🎯 КС (5x5)</option>
-                        <option value="dota">⚔️ Дота 2</option>
-                        <option value="minecraft">⛏️ Майнкрафт</option>
-                        <option value="roblox">🎲 Роблокс</option>
-                        <option value="valorant">🔫 Валорант</option>
-                    </select>
-                </div>
+                <select id="game" class="compact-select">
+                    <option value="" disabled selected>🎮 Выберите игру</option>
+                    <option value="ks_2x2">🎮 КС (2x2)</option>
+                    <option value="ks_5x5">🎯 КС (5x5)</option>
+                    <option value="dota">⚔️ Дота 2</option>
+                    <option value="minecraft">⛏️ Майнкрафт</option>
+                    <option value="roblox">🎲 Роблокс</option>
+                    <option value="valorant">🔫 Валорант</option>
+                </select>
             </div>
             
             <button class="btn-submit" onclick="sendData()">
@@ -375,6 +361,12 @@
             const schoolText = schoolSelect.selectedOptions[0].text;
             const game = gameSelect.value;
             const gameText = gameSelect.selectedOptions[0].text;
+            
+            // Проверка что выбраны школа и игра
+            if (!school || !game) {
+                alert("❌ Выберите школу и игру!");
+                return;
+            }
             
             const button = document.querySelector('.btn-submit');
             const originalText = button.innerHTML;
@@ -408,10 +400,10 @@
                 
                 const result = await response.json();
                 
-                if (result.status === "saved") {
+                if (result.google) {
+                    alert("✅ Готово! Твой выбор сохранён в Google таблицу. Удачи в игре!");
+                } else {
                     alert("✅ Готово! Твой выбор сохранён. Удачи в игре!");
-                } else if (result.status === "already_exists") {
-                    alert("⚠️ Ты уже участвуешь! Выбери другую игру или школу.");
                 }
                 
             } catch (error) {

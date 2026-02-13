@@ -10,34 +10,99 @@
 body {
     font-family: Arial;
     padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 select, button {
     margin-top: 10px;
     padding: 10px;
     font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Выбор игры</h2>
+<h2>🎮 Выбор игры</h2>
 
 <label>Выберите школу:</label><br>
-<select id="school">
-    <option value="1">Школа №1</option>
-    <option value="2">Школа №2</option>
-    <option value="3">Школа №3</option>
+<select id="school" size="10" style="height: auto;">
+    <option value="1">МБОУ "Средняя школа №1"</option>
+    <option value="2">МБОУ "Средняя школа №2"</option>
+    <option value="3">МБОУ "Средняя школа №3"</option>
+    <option value="4">МБОУ "Гимназия №4"</option>
+    <option value="5">МБОУ "Средняя школа №5"</option>
+    <option value="6">МБОУ "Средняя школа №6"</option>
+    <option value="7">МБОУ "Средняя школа №7"</option>
+    <option value="8">МБОУ "Средняя школа №8 с углубленным изучением иностранных языков"</option>
+    <option value="9">МБОУ "Средняя школа №9 им. Ю.А. Гагарина"</option>
+    <option value="10">МБОУ "Средняя школа №10"</option>
+    <option value="11">МБОУ "Средняя школа №12"</option>
+    <option value="12">МБОУ "Средняя школа №13 им. Э.Д. Балтина"</option>
+    <option value="13">МБОУ "Средняя школа №14"</option>
+    <option value="14">МБОУ "Средняя школа №15"</option>
+    <option value="15">МБОУ "Средняя школа №16"</option>
+    <option value="16">МБОУ "Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова"</option>
+    <option value="17">МБОУ "Центр образования №2 "Гнездово"</option>
+    <option value="18">МБОУ "Средняя школа №19 им. Героя России Панова"</option>
+    <option value="19">МБОУ "Лицей №1 им. академика Б.Н. Петрова"</option>
+    <option value="20">МБОУ "Средняя школа №21 им. Н.И. Рыленкова"</option>
+    <option value="21">МБОУ "Средняя школа №22"</option>
+    <option value="22">МБОУ "Средняя школа №23"</option>
+    <option value="23">МБОУ "Средняя школа №24"</option>
+    <option value="24">МБОУ "Средняя школа №25"</option>
+    <option value="25">МБОУ "Средняя школа №26 им. А.С. Пушкина"</option>
+    <option value="26">МБОУ "Средняя школа №27 им. Э.А. Хиля"</option>
+    <option value="27">МБОУ "Средняя школа №28"</option>
+    <option value="28">МБОУ "Средняя школа №29 с углубленным изучением отдельных предметов"</option>
+    <option value="29">МБОУ "Средняя школа №30 им. С.А. Железнова"</option>
+    <option value="30">МБОУ "Средняя школа №31"</option>
+    <option value="31">МБОУ "Центр образования №3 "Звездный"</option>
+    <option value="32">МБОУ "Средняя школа №33"</option>
+    <option value="33">МБОУ "Центр образования №4 "Перспектива"</option>
+    <option value="34">МБОУ "Средняя школа №35"</option>
+    <option value="35">МБОУ "Средняя школа №37"</option>
+    <option value="36">МБОУ "Средняя школа №38"</option>
+    <option value="37">МБОУ "Средняя школа №39"</option>
+    <option value="38">МБОУ "Центр образования №1 "Академия детства"</option>
+    <option value="39">МБОУ "Открытая (сменная) школа №1"</option>
+    <option value="40">МБОУ "Открытая (сменная) школа №2"</option>
+    <option value="41">МБОУ "Гимназия №1 им. Н.М. Пржевальского"</option>
+    <option value="42">МБОУ "Многопрофильный лицей"</option>
 </select>
 
 <br><br>
 
 <label>Выберите игру:</label><br>
 <select id="game">
-    <option value="football">Футбол</option>
-    <option value="chess">Шахматы</option>
-    <option value="basketball">Баскетбол</option>
+    <option value="ks_2x2">КС (2x2)</option>
+    <option value="ks_5x5">КС (5x5)</option>
+    <option value="dota">Дота 2</option>
+    <option value="minecraft">Майнкрафт</option>
+    <option value="roblox">Роблокс</option>
+    <option value="valorant">Валорант</option>
 </select>
 
 <br><br>
@@ -48,10 +113,19 @@ select, button {
 
 vkBridge.send('VKWebAppInit');
 
+// Проверяем, открыто ли приложение внутри ВК
+if (window.location.href.includes('vk.com')) {
+    console.log('Запущено внутри ВК');
+} else {
+    console.log('Запущено вне ВК, некоторые функции могут не работать');
+}
+
 async function sendData() {
 
     let school = document.getElementById("school").value;
+    let schoolText = document.getElementById("school").selectedOptions[0].text;
     let game = document.getElementById("game").value;
+    let gameText = document.getElementById("game").selectedOptions[0].text;
 
     try {
 
@@ -62,8 +136,10 @@ async function sendData() {
         const payload = {
             vk_id: user.id,
             name: user.first_name + " " + user.last_name,
-            school: school,
-            game: game,
+            school_id: school,
+            school_name: schoolText,
+            game_id: game,
+            game_name: gameText,
             phone: phoneData.phone_number,
             date: new Date().toISOString()
         };
@@ -76,10 +152,11 @@ async function sendData() {
             body: JSON.stringify(payload)
         });
 
-        alert("Ответ сохранён");
+        alert("Ответ сохранён! Спасибо за участие :)");
 
     } catch (error) {
         alert("Ошибка или пользователь отказался дать данные");
+        console.error(error);
     }
 
 }

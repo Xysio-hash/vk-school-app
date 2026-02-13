@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Школьные игры</title>
+
+<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    padding: 20px;
+}
+
+select, button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Выбор игры</h2>
+
+<label>Выберите школу:</label><br>
+<select id="school">
+    <option value="1">Школа №1</option>
+    <option value="2">Школа №2</option>
+    <option value="3">Школа №3</option>
+</select>
+
+<br><br>
+
+<label>Выберите игру:</label><br>
+<select id="game">
+    <option value="football">Футбол</option>
+    <option value="chess">Шахматы</option>
+    <option value="basketball">Баскетбол</option>
+</select>
+
+<br><br>
+
+<button onclick="sendData()">Отправить</button>
+
+<script>
+
+vkBridge.send('VKWebAppInit');
+
+async function sendData() {
+
+    let school = document.getElementById("school").value;
+    let game = document.getElementById("game").value;
+
+    try {
+
+        const user = await vkBridge.send('VKWebAppGetUserInfo');
+
+        const phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
+
+        const payload = {
+            vk_id: user.id,
+            name: user.first_name + " " + user.last_name,
+            school: school,
+            game: game,
+            phone: phoneData.phone_number,
+            date: new Date().toISOString()
+        };
+
+        await fetch("http://localhost:3000/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        alert("Ответ сохранён");
+
+    } catch (error) {
+        alert("Ошибка или пользователь отказался дать данные");
+    }
+
+}
+
+</script>
+
+</body>
+</html>

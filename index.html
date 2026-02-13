@@ -8,8 +8,9 @@
     <!-- VK Bridge -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     
-    <!-- VKUI styles -->
+    <!-- VKUI styles и скрипты -->
     <link href="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.js"></script>
     
     <!-- Google Fonts для красивого текста -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -101,6 +102,91 @@
             position: relative;
         }
         
+        /* Стили для VKUI сообщения */
+        .vk-message {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e0e0e0;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .vk-message.show {
+            display: block;
+        }
+        
+        .vk-message.warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .vk-message.success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .vk-message.error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .vk-message-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .vk-message-icon {
+            font-size: 24px;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vk-message.warning .vk-message-icon {
+            color: #ff9800;
+        }
+        
+        .vk-message.success .vk-message-icon {
+            color: #4caf50;
+        }
+        
+        .vk-message.error .vk-message-icon {
+            color: #f44336;
+        }
+        
+        .vk-message-text {
+            flex: 1;
+            font-size: 1em;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .vk-message-text strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        
         .content {
             padding: 30px;
         }
@@ -155,26 +241,6 @@
         .compact-select option {
             padding: 12px;
             font-size: 1em;
-        }
-        
-        select[multiple] {
-            height: 200px;
-            padding: 10px;
-        }
-        
-        select[multiple] option {
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 2px 0;
-        }
-        
-        select[multiple] option:hover {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-        }
-        
-        select[multiple] option:checked {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
         
         .btn-submit {
@@ -258,6 +324,11 @@
                 padding: 12px 15px;
                 font-size: 0.95em;
             }
+            
+            .vk-message-content {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -267,6 +338,19 @@
             <i class="fas fa-gamepad"></i>
             <h1>Школьные игры</h1>
             <p>Выбери игру и найди команду</p>
+        </div>
+        
+        <!-- Блок для сообщений VKUI -->
+        <div id="vkMessage" class="vk-message">
+            <div class="vk-message-content">
+                <div class="vk-message-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="vk-message-text">
+                    <strong>Внимание</strong>
+                    <span id="messageText">Текст сообщения</span>
+                </div>
+            </div>
         </div>
         
         <div class="content">
@@ -353,17 +437,37 @@
     <script>
         vkBridge.send('VKWebAppInit');
 
-        // Функция для показа сообщения через VK Bridge (работает на всех платформах)
-        async function showVKMessage(message) {
-            try {
-                // Пытаемся показать нативный попап VK
-                await vkBridge.send('VKWebAppShowMessageBox', {
-                    text: message
-                });
-            } catch (e) {
-                // Если не сработало (например, вне ВК), показываем обычный alert
-                alert(message);
+        // Функция для показа сообщения в стиле VKUI
+        function showVKUIMessage(message, type = 'warning') {
+            const messageBlock = document.getElementById('vkMessage');
+            const messageText = document.getElementById('messageText');
+            const messageIcon = document.querySelector('.vk-message-icon i');
+            
+            // Убираем предыдущие классы
+            messageBlock.classList.remove('show', 'warning', 'success', 'error');
+            
+            // Добавляем нужный класс
+            messageBlock.classList.add('show', type);
+            
+            // Меняем иконку в зависимости от типа
+            if (type === 'warning') {
+                messageIcon.className = 'fas fa-exclamation-triangle';
+                document.querySelector('.vk-message-text strong').textContent = 'Внимание';
+            } else if (type === 'success') {
+                messageIcon.className = 'fas fa-check-circle';
+                document.querySelector('.vk-message-text strong').textContent = 'Успешно';
+            } else if (type === 'error') {
+                messageIcon.className = 'fas fa-times-circle';
+                document.querySelector('.vk-message-text strong').textContent = 'Ошибка';
             }
+            
+            // Вставляем текст
+            messageText.textContent = message;
+            
+            // Автоматически скрываем через 5 секунд
+            setTimeout(() => {
+                messageBlock.classList.remove('show');
+            }, 5000);
         }
 
         async function sendData() {
@@ -377,7 +481,7 @@
             
             // Проверка что выбраны школа и игра
             if (!school || !game) {
-                await showVKMessage("❌ Выберите школу и игру!");
+                showVKUIMessage("Выберите школу и игру!", "warning");
                 return;
             }
             
@@ -396,8 +500,8 @@
                 try {
                     phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
                 } catch (phoneError) {
-                    // Если пользователь отказался дать телефон - показываем сообщение через VK Bridge
-                    await showVKMessage("📱 Для записи на турнир вам нужно поделиться телефоном");
+                    // Если пользователь отказался дать телефон - показываем сообщение в стиле VKUI
+                    showVKUIMessage("Для записи на турнир вам нужно поделиться телефоном", "warning");
                     button.innerHTML = originalText;
                     button.disabled = false;
                     return;
@@ -425,13 +529,13 @@
                 const result = await response.json();
                 
                 if (result.google) {
-                    await showVKMessage("✅ Готово! Твой выбор сохранён в Google таблицу. Удачи в игре!");
+                    showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
                 } else {
-                    await showVKMessage("✅ Готово! Твой выбор сохранён. Удачи в игре!");
+                    showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
                 }
                 
             } catch (error) {
-                await showVKMessage("❌ Ошибка. Попробуй ещё раз");
+                showVKUIMessage("Ошибка. Попробуй ещё раз", "error");
                 console.error(error);
             } finally {
                 // Возвращаем кнопку в исходное состояние

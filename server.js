@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Настройки Google Sheets - ЗАМЕНИ НА СВОЙ ID ТАБЛИЦЫ!
-const SPREADSHEET_ID = 'тут_должен_быть_id_твоей_таблицы';
+const SPREADSHEET_ID = '1tEklyTXbYXTO8d47lLz0HJMRax-starW9gnBmfiZdpA';
 
 // Middleware
 app.use(cors({

@@ -122,7 +122,7 @@
             color: #667eea;
         }
         
-        /* Компактный выпадающий список для школ */
+        /* Компактный выпадающий список */
         .compact-select {
             width: 100%;
             padding: 15px 20px;
@@ -155,26 +155,6 @@
         .compact-select option {
             padding: 12px;
             font-size: 1em;
-        }
-        
-        select[multiple] {
-            height: 200px;
-            padding: 10px;
-        }
-        
-        select[multiple] option {
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 2px 0;
-        }
-        
-        select[multiple] option:hover {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-        }
-        
-        select[multiple] option:checked {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
         
         .btn-submit {
@@ -353,6 +333,29 @@
     <script>
         vkBridge.send('VKWebAppInit');
 
+        // Функция проверки подписки на сообщества
+        async function checkSubscriptions(userId) {
+            try {
+                // Проверка подписки на Colizeum (ID: 229200901)
+                const colizeumCheck = await vkBridge.send("VKWebAppCheckGroupSubscription", {
+                    group_id: 229200901
+                });
+                
+                // Проверка подписки на CyberLeague (ID: 209470615)
+                const cyberCheck = await vkBridge.send("VKWebAppCheckGroupSubscription", {
+                    group_id: 209470615
+                });
+                
+                return {
+                    colizeum: colizeumCheck.subscribed,
+                    cyber: cyberCheck.subscribed
+                };
+            } catch (error) {
+                console.error("Ошибка проверки подписок:", error);
+                return null;
+            }
+        }
+
         async function sendData() {
             const schoolSelect = document.getElementById("school");
             const gameSelect = document.getElementById("game");
@@ -373,11 +376,35 @@
             
             try {
                 // Показываем загрузку
-                button.innerHTML = '<span class="loading"></span> Отправка...';
+                button.innerHTML = '<span class="loading"></span> Проверка...';
                 button.disabled = true;
                 
+                // Получаем данные пользователя
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
                 const phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
+                
+                // Проверяем подписки
+                const subs = await checkSubscriptions(user.id);
+                
+                // Проверяем подписку на оба сообщества
+                if (!subs || !subs.colizeum || !subs.cyber) {
+                    let message = "❌ Для отправки анкеты нужно подписаться на:\n";
+                    if (!subs?.colizeum) message += "• https://vk.com/colizeum_kolhoznaya\n";
+                    if (!subs?.cyber) message += "• https://vk.com/cyberleague67\n";
+                    
+                    alert(message);
+                    
+                    // Открываем ссылки для подписки
+                    if (!subs?.colizeum) window.open("https://vk.com/colizeum_kolhoznaya");
+                    if (!subs?.cyber) window.open("https://vk.com/cyberleague67");
+                    
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    return;
+                }
+                
+                // Если подписки есть — сохраняем данные
+                button.innerHTML = '<span class="loading"></span> Отправка...';
                 
                 const payload = {
                     vk_id: user.id,
@@ -401,9 +428,9 @@
                 const result = await response.json();
                 
                 if (result.google) {
-                    alert("✅ Готово! Твой выбор сохранён в Google таблицу. Удачи в игре!");
+                    alert("✅ Готово! Твой выбор сохранён в Google таблицу. Спасибо за подписку и удачи в игре!");
                 } else {
-                    alert("✅ Готово! Твой выбор сохранён. Удачи в игре!");
+                    alert("✅ Готово! Твой выбор сохранён. Спасибо за подписку и удачи в игре!");
                 }
                 
             } catch (error) {

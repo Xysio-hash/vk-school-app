@@ -274,14 +274,19 @@
             font-size: 1.2em;
         }
         
-        /* Стили для кнопки сообществ */
-        .communities-button {
-            width: calc(100% - 40px);
-            margin: 0 20px 20px 20px;
+        /* Стили для кнопок сообществ */
+        .communities-section {
+            padding: 0 30px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .community-button {
+            width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #4a76a8 0%, #6383a8 100%);
-            color: white;
-            border: none;
+            background: white;
+            border: 2px solid #e0e0e0;
             border-radius: 15px;
             font-size: 1.1em;
             font-weight: 500;
@@ -289,127 +294,51 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(74, 118, 168, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .communities-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(74, 118, 168, 0.4);
-            background: linear-gradient(135deg, #3d6190 0%, #5375a0 100%);
-        }
-        
-        .communities-button:active {
-            transform: translateY(0);
-        }
-        
-        .communities-button i {
-            font-size: 1.3em;
-        }
-        
-        /* Стили для попапа сообществ */
-        .communities-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .communities-popup.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .popup-content {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-        
-        .communities-popup.show .popup-content {
-            transform: translateY(0);
-        }
-        
-        .popup-header {
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .popup-header h3 {
+            text-decoration: none;
             color: #333;
-            font-size: 1.3em;
-            font-weight: 600;
         }
         
-        .popup-header i {
-            color: #999;
-            cursor: pointer;
-            font-size: 1.5em;
-            transition: color 0.3s ease;
-        }
-        
-        .popup-header i:hover {
-            color: #667eea;
-        }
-        
-        .community-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .community-item:hover {
+        .community-button:hover {
             transform: translateX(5px);
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            border-color: #667eea;
+            border-color: #4a76a8;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            box-shadow: 0 5px 15px rgba(74, 118, 168, 0.2);
         }
         
-        .community-item i {
+        .community-button i:first-child {
             font-size: 2em;
             color: #4a76a8;
             margin-right: 15px;
         }
         
-        .community-info {
+        .community-button-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         
-        .community-info h4 {
+        .community-button-content h4 {
             color: #333;
             font-size: 1.1em;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         
-        .community-info p {
+        .community-button-content p {
             color: #666;
-            font-size: 0.9em;
+            font-size: 0.85em;
+        }
+        
+        .community-button .fa-chevron-right {
+            color: #999;
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+        
+        .community-button:hover .fa-chevron-right {
+            transform: translateX(5px);
+            color: #4a76a8;
         }
         
         .footer {
@@ -480,13 +409,16 @@
                 font-size: 0.85em;
             }
             
-            .community-item {
-                padding: 12px;
+            .communities-section {
+                padding: 0 20px 20px 20px;
             }
             
-            .community-item i {
-                font-size: 1.5em;
-                margin-right: 10px;
+            .community-button-content h4 {
+                font-size: 1em;
+            }
+            
+            .community-button-content p {
+                font-size: 0.8em;
             }
         }
     </style>
@@ -588,12 +520,26 @@
             </button>
         </div>
         
-        <!-- Кнопка "Наши сообщества" -->
-        <button class="communities-button" onclick="showCommunities()">
-            <i class="fab fa-vk"></i>
-            Наши сообщества
-            <i class="fas fa-chevron-right"></i>
-        </button>
+        <!-- Прямые ссылки на сообщества -->
+        <div class="communities-section">
+            <a href="https://vk.com/colizeum_kolhoznaya" target="_blank" class="community-button">
+                <i class="fab fa-vk"></i>
+                <div class="community-button-content">
+                    <h4>Colizeum</h4>
+                    <p>Киберспортивное сообщество</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            
+            <a href="https://vk.com/cyberleague67" target="_blank" class="community-button">
+                <i class="fab fa-vk"></i>
+                <div class="community-button-content">
+                    <h4>КиберЛига</h4>
+                    <p>Киберспортивная секция</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
         
         <div class="footer">
             <p>
@@ -601,32 +547,6 @@
                 Если у вас долго грузится отправление, просим подождать пару минут или перезайти в приложение, сервера уже подгружаются!
                 <i class="fas fa-clock"></i>
             </p>
-        </div>
-    </div>
-
-    <!-- Попап с сообществами -->
-    <div id="communitiesPopup" class="communities-popup" onclick="hideCommunities(event)">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h3>Наши сообщества</h3>
-                <i class="fas fa-times" onclick="hideCommunities()"></i>
-            </div>
-            <div class="community-item" onclick="openCommunity('colizeum')">
-                <i class="fab fa-vk"></i>
-                <div class="community-info">
-                    <h4>Colizeum</h4>
-                    <p>Киберспортивное сообщество</p>
-                </div>
-                <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="community-item" onclick="openCommunity('cyber')">
-                <i class="fab fa-vk"></i>
-                <div class="community-info">
-                    <h4>КиберЛига</h4>
-                    <p>Киберспортивная секция</p>
-                </div>
-                <i class="fas fa-chevron-right"></i>
-            </div>
         </div>
     </div>
 
@@ -664,29 +584,6 @@
             setTimeout(() => {
                 messageBlock.classList.remove('show');
             }, 5000);
-        }
-
-        // Функция для показа попапа с сообществами
-        function showCommunities() {
-            document.getElementById('communitiesPopup').classList.add('show');
-        }
-
-        // Функция для скрытия попапа
-        function hideCommunities(event) {
-            // Если клик был по фону, а не по содержимому
-            if (!event || event.target.classList.contains('communities-popup')) {
-                document.getElementById('communitiesPopup').classList.remove('show');
-            }
-        }
-
-        // Функция для открытия сообщества
-        function openCommunity(community) {
-            if (community === 'colizeum') {
-                window.open('https://vk.com/colizeum_kolhoznaya');
-            } else if (community === 'cyber') {
-                window.open('https://vk.com/cyberleague67');
-            }
-            hideCommunities();
         }
 
         async function sendData() {

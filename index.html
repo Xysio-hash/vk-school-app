@@ -12,10 +12,10 @@
     <link href="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.css" rel="stylesheet"/>
     <script src="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.js"></script>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts для красивого текста -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -1195,7 +1195,7 @@
         let selectedSchoolId = null;
         let selectedSchoolName = '';
         let soundEnabled = true;
-        
+
         // Массив школ (сортировка по алфавиту)
         const schools = [
             { id: "1", name: "МБОУ \"Средняя школа №1\"" },
@@ -1313,7 +1313,7 @@
             return selectedSchoolId;
         }
 
-        // Функции темы и звука
+        // Тема
         function toggleTheme() {
             const body = document.body;
             const themeToggle = document.getElementById('themeToggle');
@@ -1335,6 +1335,7 @@
             }
         }
 
+        // Звук
         function toggleSound() {
             soundEnabled = !soundEnabled;
             const soundToggle = document.getElementById('soundToggle');
@@ -1357,7 +1358,6 @@
             }
         }
 
-        // Звуковые эффекты
         function playSound(type) {
             if (!soundEnabled) return;
             try {
@@ -1436,21 +1436,39 @@
         // Проверка участия
         async function checkUserParticipation(vkId, gameId) {
             try {
-                const res = await fetch(`${SERVER_URL}/check-participation?user_id=${vkId}&game_id=${gameId}`);
+                const url = `${SERVER_URL}/check-participation?user_id=${vkId}&game_id=${gameId}`;
+                console.log("🔍 Проверка участия:", url);
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
+                console.log("📊 Результат проверки:", data);
+                if (data.error) {
+                    console.warn("⚠️ Сервер вернул ошибку, считаем что участие уже есть");
+                    return true;
+                }
                 return data.participates;
-            } catch {
-                return false;
+            } catch (e) {
+                console.error("❌ Ошибка checkUserParticipation:", e);
+                return true; // при ошибке блокируем отправку
             }
         }
 
-        // Получение списка заявок пользователя (полные данные)
+        // Получение заявок пользователя
         async function getUserApplications(vkId) {
             try {
-                const res = await fetch(`${SERVER_URL}/user-applications?user_id=${vkId}`);
+                const url = `${SERVER_URL}/user-applications?user_id=${vkId}`;
+                console.log("🔍 Запрос заявок:", url);
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
+                console.log("📊 Данные заявок:", data);
+                if (data.error) {
+                    console.warn("⚠️ Сервер вернул ошибку при получении заявок");
+                    return [];
+                }
                 return data.applications || [];
-            } catch {
+            } catch (e) {
+                console.error("❌ Ошибка getUserApplications:", e);
                 return [];
             }
         }
@@ -1485,6 +1503,7 @@
                     listDiv.innerHTML = html;
                 }
             } catch (e) {
+                console.error("❌ Ошибка showMyApplications:", e);
                 listDiv.innerHTML = '<div class="empty-applications">Ошибка загрузки</div>';
             }
         }
@@ -1525,6 +1544,7 @@
                 btn.disabled = false;
                 document.getElementById('confirmModal').classList.add('show');
             } catch (e) {
+                console.error("❌ Ошибка checkBeforeSubmit:", e);
                 btn.innerHTML = orig;
                 btn.disabled = false;
                 document.getElementById('confirmModal').classList.add('show');
@@ -1537,6 +1557,7 @@
             }
         }
 
+        // Отправка данных
         async function processSendData() {
             const schoolId = getSelectedSchool();
             const schoolName = selectedSchoolName;
@@ -1592,6 +1613,7 @@
                 });
                 
                 const result = await res.json();
+                console.log("📥 Ответ сервера /save:", result);
                 
                 if (result.status === "already_exists") {
                     showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
@@ -1604,6 +1626,7 @@
                     playSound('success');
                 }
             } catch (e) {
+                console.error("❌ Ошибка отправки:", e);
                 showVKUIMessage("Ошибка. Попробуйте ещё раз", "error");
                 playSound('error');
             } finally {

@@ -991,4 +991,52 @@
                 try {
                     phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
                 } catch (phoneError) {
-                    show
+                    showVKUIMessage("Для записи на турнир вам нужно поделиться телефоном", "warning");
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    hideConfirmModal();
+                    return;
+                }
+                
+                const payload = {
+                    vk_id: user.id,
+                    name: `${user.first_name} ${user.last_name}`,
+                    school_id: school,
+                    school_name: schoolText,
+                    game_id: game,
+                    game_name: gameText,
+                    phone: phoneData.phone_number,
+                    date: new Date().toISOString()
+                };
+                
+                const response = await fetch(`${SERVER_URL}/save`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.google) {
+                    showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
+                } else {
+                    showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
+                }
+                
+                // Сбрасываем форму или оставляем как есть
+                // Можно добавить сброс выбора, если нужно
+                
+            } catch (error) {
+                showVKUIMessage("Ошибка. Попробуй ещё раз", "error");
+                console.error(error);
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                hideConfirmModal();
+            }
+        }
+    </script>
+</body>
+</html>

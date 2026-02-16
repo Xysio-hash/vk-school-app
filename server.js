@@ -214,6 +214,28 @@ app.get('/user-games', (req, res) => {
     }
 });
 
+// Получение всех заявок пользователя с полной информацией
+app.get('/user-applications', (req, res) => {
+    const { user_id } = req.query;
+    try {
+        const db = JSON.parse(fs.readFileSync(DB_FILE));
+        
+        const userApps = db.filter(entry => entry.vk_id === user_id);
+        
+        // Возвращаем только нужные поля
+        const applications = userApps.map(app => ({
+            game_id: app.game_id,
+            game_name: app.game_name,
+            school_name: app.school_name,
+            date: app.date
+        }));
+        
+        res.json({ applications });
+    } catch (error) {
+        console.error("Ошибка получения заявок пользователя:", error);
+        res.json({ applications: [], error: true });
+    }
+});
 // Запуск сервера
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);

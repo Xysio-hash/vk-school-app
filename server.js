@@ -381,7 +381,43 @@ app.post('/api/send-notifications', async (req, res) => {
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
     }
 });
-
+// ВРЕМЕННЫЙ ТЕСТОВЫЙ МАРШРУТ
+app.get('/api/test-notification', async (req, res) => {
+    const { user_id } = req.query;
+    
+    if (!user_id) {
+        return res.json({ error: 'Нет user_id' });
+    }
+    
+    try {
+        console.log('🔍 Тестовая отправка для user_id:', user_id);
+        console.log('🔑 Токен:', process.env.VK_API_TOKEN ? 'есть' : 'НЕТ');
+        
+        const params = new URLSearchParams({
+            v: '5.131',
+            access_token: process.env.VK_API_TOKEN,
+            user_ids: user_id,
+            message: 'Тестовое уведомление от приложения',
+            fragment: 'app54452043'
+        });
+        
+        const response = await fetch('https://api.vk.com/method/notifications.sendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params
+        });
+        
+        const result = await response.json();
+        console.log('📨 Ответ VK API:', JSON.stringify(result, null, 2));
+        res.json(result);
+        
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        res.json({ error: error.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📊 Google Sheets ID: ${SPREADSHEET_ID}`);

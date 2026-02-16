@@ -7,31 +7,42 @@ const { google } = require('googleapis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Настройки Google Sheets - ЗАМЕНИ НА СВОЙ ID ТАБЛИЦЫ!
+// Настройки Google Sheets
 const SPREADSHEET_ID = '1tEklyTXbYXTO8d47lLz0HJMRax-starW9gnBmfiZdpA';
 
-// Middleware
+// Расширенные настройки CORS
 app.use(cors({
-    origin: ['https://xysio-hash.github.io', 'http://localhost:3000']
+    origin: [
+        'https://xysio-hash.github.io',
+        'http://localhost:3000',
+        'https://vk.com',
+        'https://dev.vk.com'
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
+
+// Для обработки предварительных запросов OPTIONS
+app.options('*', cors());
+
 app.use(express.json());
 
-// Локальная база (на всякий случай)
+// Локальная база
 const DB_FILE = path.join(__dirname, 'database.json');
 if (!fs.existsSync(DB_FILE)) {
     fs.writeFileSync(DB_FILE, JSON.stringify([]));
 }
 
-// Авторизация в Google Sheets через переменные окружения
+// Авторизация в Google Sheets
 async function getGoogleSheetsClient() {
     try {
         let credentials;
         
-        // На Render используем переменную окружения
         if (process.env.GOOGLE_CREDENTIALS) {
             credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
         } else {
-            // Локально читаем из файла
             const credsPath = path.join(__dirname, 'config', 'google-credentials.json');
             credentials = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
         }
@@ -58,7 +69,6 @@ async function saveToGoogleSheets(data) {
             return false;
         }
         
-        // Подготовка данных для записи
         const values = [[
             data.vk_id,
             data.name,
@@ -100,8 +110,22 @@ app.post('/save', async (req, res) => {
     
     console.log('📥 Получены данные:', newData);
     
-    // Сохраняем локально (для бэкапа)
+    // Проверяем, есть ли уже такой участник
     const db = JSON.parse(fs.readFileSync(DB_FILE));
+    const existingParticipant = db.find(entry => 
+        entry.vk_id === newData.vk_id && entry.game_id === newData.game_id
+    );
+    
+    if (existingParticipant) {
+        console.log('⚠️ Участник уже зарегистрирован на эту игру');
+        return res.json({ 
+            status: "already_exists", 
+            message: "Вы уже участвуете в этой игре",
+            google: false 
+        });
+    }
+    
+    // Сохраняем локально
     db.push(newData);
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
     
@@ -150,11 +174,11 @@ app.get('/test-google', async (req, res) => {
     });
 });
 
-// !!! НОВЫЕ ФУНКЦИИ ДЛЯ ПРОВЕРКИ УЧАСТИЯ !!!
-
 // Проверка участия пользователя в конкретной игре
 app.get('/check-participation', (req, res) => {
     const { user_id, game_id } = req.query;
+    console.log(`🔍 Проверка участия: user=${user_id}, game=${game_id}`);
+    
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
         
@@ -162,6 +186,7 @@ app.get('/check-participation', (req, res) => {
             entry.vk_id === user_id && entry.game_id === game_id
         );
         
+        console.log(`📊 Результат: ${participant ? 'уже участвует' : 'не участвует'}`);
         res.json({ participates: !!participant });
     } catch (error) {
         console.error("Ошибка проверки участия:", error);
@@ -172,6 +197,8 @@ app.get('/check-participation', (req, res) => {
 // Получение всех игр пользователя
 app.get('/user-games', (req, res) => {
     const { user_id } = req.query;
+    console.log(`🔍 Получение игр пользователя: ${user_id}`);
+    
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
         
@@ -179,6 +206,7 @@ app.get('/user-games', (req, res) => {
             .filter(entry => entry.vk_id === user_id)
             .map(entry => entry.game_id);
         
+        console.log(`📊 Игры пользователя:`, userGames);
         res.json({ games: userGames });
     } catch (error) {
         console.error("Ошибка получения игр пользователя:", error);

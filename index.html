@@ -1130,12 +1130,6 @@
                 <i class="fas fa-crown"></i>
                 Админ-панель
             </button>
-            
-            <!-- Кнопка для включения уведомлений -->
-            <button class="my-applications-btn" onclick="requestNotifications()" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); margin-top: 10px;">
-                <i class="fas fa-bell"></i>
-                Включить уведомления
-            </button>
         </div>
         
         <!-- Прямые ссылки на сообщества -->
@@ -1639,19 +1633,9 @@
                 } else if (result.google) {
                     showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
                     playSound('success');
-                    
-                    // Запрашиваем разрешение на уведомления после успешной отправки
-                    setTimeout(() => {
-                        requestNotifications();
-                    }, 1000);
                 } else {
                     showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
                     playSound('success');
-                    
-                    // Запрашиваем разрешение на уведомления после успешной отправки
-                    setTimeout(() => {
-                        requestNotifications();
-                    }, 1000);
                 }
             } catch (e) {
                 console.error("❌ Ошибка отправки:", e);
@@ -1662,128 +1646,6 @@
                 btn.disabled = false;
                 hideConfirmModal();
             }
-        }
-
-        // ===== УЛУЧШЕННАЯ ФУНКЦИЯ ДЛЯ УВЕДОМЛЕНИЙ =====
-        // Запрос разрешения на уведомления
-        async function requestNotifications() {
-            try {
-                // Пробуем вызвать нативный метод VK
-                const result = await vkBridge.send('VKWebAppAllowNotifications');
-                console.log('📱 Результат запроса уведомлений:', result);
-                
-                if (result.result) {
-                    showVKUIMessage("✅ Уведомления включены! Теперь вы будете получать оповещения о турнирах.", "success");
-                } else {
-                    // Если пользователь отказался, показываем инструкцию
-                    showNotificationInstructions();
-                }
-            } catch (error) {
-                console.error('❌ Ошибка запроса уведомлений:', error);
-                // Если метод не поддерживается, показываем инструкцию
-                showNotificationInstructions();
-            }
-        }
-
-        // Показать инструкцию по включению уведомлений (для телефона и компьютера)
-        function showNotificationInstructions() {
-            const modal = document.createElement('div');
-            modal.className = 'confirm-modal show';
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.remove();
-            };
-            
-            // Определяем, телефон или компьютер
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            let steps = '';
-            
-            if (isMobile) {
-                // Инструкция для телефона
-                steps = `
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
-                        <div style="flex: 1;">Нажмите на <strong>три полоски</strong> в левом верхнем углу</div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
-                        <div style="flex: 1;">Выберите <strong>"Настройки"</strong></div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
-                        <div style="flex: 1;">Нажмите <strong>"Приложения"</strong></div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
-                        <div style="flex: 1;">Найдите <strong>"Школьные игры"</strong> в списке</div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">5</div>
-                        <div style="flex: 1;">Включите переключатель <strong>"Уведомления"</strong></div>
-                    </div>
-                `;
-            } else {
-                // Инструкция для компьютера
-                steps = `
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
-                        <div style="flex: 1;">Нажмите на <strong>аватарку</strong> в правом верхнем углу</div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
-                        <div style="flex: 1;">Выберите <strong>"Настройки"</strong></div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
-                        <div style="flex: 1;">Перейдите в раздел <strong>"Приложения"</strong></div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
-                        <div style="flex: 1;">Найдите <strong>"Школьные игры"</strong> в списке</div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="background: #2196f3; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">5</div>
-                        <div style="flex: 1;">Включите переключатель <strong>"Уведомления"</strong></div>
-                    </div>
-                `;
-            }
-            
-            modal.innerHTML = `
-                <div class="confirm-content" style="max-width: 400px;" onclick="event.stopPropagation()">
-                    <div class="popup-header">
-                        <h3>🔔 Как включить уведомления</h3>
-                        <i class="fas fa-times" onclick="this.closest('.confirm-modal').remove()"></i>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <div style="background: #e3f2fd; padding: 20px; border-radius: 15px; margin-bottom: 15px;">
-                            ${steps}
-                        </div>
-                        
-                        <div style="background: #fff3cd; padding: 15px; border-radius: 15px; color: #856404;">
-                            <i class="fas fa-lightbulb"></i>
-                            <strong>Совет:</strong> После включения уведомлений вы будете получать оповещения о турнирах!
-                        </div>
-                    </div>
-                    
-                    <div class="confirm-buttons">
-                        <button class="confirm-btn yes" onclick="this.closest('.confirm-modal').remove()" style="background: #2196f3;">
-                            <i class="fas fa-check"></i>
-                            Понятно
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
         }
 
         function showVKUIMessage(msg, type) {

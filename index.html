@@ -987,4 +987,54 @@
                 
                 const response = await fetch("https://vk-school-app-server.onrender.com/save", {
                     method: "POST",
-                   
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.google) {
+                    // Сохраняем отправку в историю
+                    saveSubmission(game);
+                    showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
+                } else {
+                    saveSubmission(game);
+                    showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
+                }
+                
+            } catch (error) {
+                showVKUIMessage("Ошибка. Попробуй ещё раз", "error");
+                console.error(error);
+            } finally {
+                // Возвращаем кнопку в исходное состояние
+                button.innerHTML = originalText;
+                button.disabled = false;
+                hideConfirmModal();
+            }
+        }
+
+        // Добавляем обработчик для выбора игры (подсвечиваем доступные)
+        const gameSelect = document.getElementById('game');
+        gameSelect.addEventListener('change', function() {
+            const selectedGame = this.value;
+            if (selectedGame && !canSubmit(selectedGame)) {
+                showVKUIMessage("Вы уже участвуете в этой игре! Выберите другую.", "warning");
+                this.value = '';
+            }
+        });
+
+        // Показываем пользователю, в каких играх он уже участвует
+        const availableGames = getAvailableGames();
+        if (availableGames.length < 6) {
+            const participatedGames = Object.keys(userSubmissions);
+            if (participatedGames.length > 0) {
+                setTimeout(() => {
+                    showVKUIMessage(`Вы уже участвуете в игре: ${participatedGames.join(', ')}. Можете выбрать другую.`, "info");
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

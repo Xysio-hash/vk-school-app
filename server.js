@@ -190,6 +190,7 @@ app.get('/user-applications', (req, res) => {
         res.json({ applications: [], error: true });
     }
 });
+
 // ========== АДМИН-ПАНЕЛЬ И РАССЫЛКА ==========
 
 // Хранилище отправленных уведомлений (чтобы не дублировать)
@@ -434,6 +435,7 @@ app.get('/api/notification-history', (req, res) => {
         res.status(500).json({ error: true });
     }
 });
+
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📊 Google Sheets ID: ${SPREADSHEET_ID}`);

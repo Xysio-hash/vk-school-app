@@ -33,6 +33,11 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
         }
         
         .container {
@@ -44,6 +49,12 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
             animation: slideUp 0.5s ease;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-theme .container {
+            background: rgba(30, 30, 40, 0.95);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
         }
         
         @keyframes slideUp {
@@ -64,6 +75,11 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-theme .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
         }
         
         .header::before {
@@ -100,6 +116,32 @@
             font-size: 3em;
             margin-bottom: 15px;
             position: relative;
+        }
+        
+        /* Стили для переключателя темы */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        .theme-toggle button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle button:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
         }
         
         /* Стили для индикатора сервера */
@@ -169,6 +211,19 @@
             animation: fadeIn 0.3s ease;
         }
         
+        body.dark-theme .vk-message {
+            background: #2c3e50;
+            border-color: #4a5568;
+        }
+        
+        body.dark-theme .vk-message-text {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .vk-message-text strong {
+            color: #fff;
+        }
+        
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -189,8 +244,18 @@
             border-left: 4px solid #ff9800;
         }
         
+        body.dark-theme .vk-message.warning {
+            background: #4a3f2a;
+            border-left: 4px solid #ff9800;
+        }
+        
         .vk-message.success {
             background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        body.dark-theme .vk-message.success {
+            background: #2a3f2a;
             border-left: 4px solid #4caf50;
         }
         
@@ -199,8 +264,18 @@
             border-left: 4px solid #f44336;
         }
         
+        body.dark-theme .vk-message.error {
+            background: #3f2a2a;
+            border-left: 4px solid #f44336;
+        }
+        
         .vk-message.info {
             background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
+        body.dark-theme .vk-message.info {
+            background: #2a3f4a;
             border-left: 4px solid #2196f3;
         }
         
@@ -220,6 +295,10 @@
             background: white;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark-theme .vk-message-icon {
+            background: #1e2a3a;
         }
         
         .vk-message.warning .vk-message-icon {
@@ -267,12 +346,85 @@
             font-size: 1.1em;
         }
         
+        body.dark-theme .form-group label {
+            color: #e0e0e0;
+        }
+        
         .form-group label i {
             margin-right: 10px;
             color: #667eea;
         }
         
-        /* Компактный выпадающий список для школ */
+        body.dark-theme .form-group label i {
+            color: #90a4ae;
+        }
+        
+        /* Стили для поиска школ */
+        .school-search {
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        body.dark-theme .search-input {
+            background: #2c3e50;
+            border-color: #4a5568;
+            color: white;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .schools-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+        }
+        
+        body.dark-theme .schools-container {
+            background: #2c3e50;
+            border-color: #4a5568;
+        }
+        
+        .school-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        body.dark-theme .school-item {
+            border-bottom-color: #4a5568;
+            color: #e0e0e0;
+        }
+        
+        .school-item:last-child {
+            border-bottom: none;
+        }
+        
+        .school-item:hover {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+        }
+        
+        .school-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Компактный выпадающий список для игр */
         .compact-select {
             width: 100%;
             padding: 15px 20px;
@@ -290,6 +442,13 @@
             background-repeat: no-repeat;
             background-position: right 15px center;
             background-size: 16px;
+        }
+
+        body.dark-theme .compact-select {
+            background: #2c3e50;
+            border-color: #4a5568;
+            color: white;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2390a4ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
         }
 
         .compact-select:hover {
@@ -338,6 +497,159 @@
             font-size: 1.2em;
         }
         
+        /* Стили для кнопки Мои заявки */
+        .my-applications-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #4a76a8 0%, #6383a8 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(74, 118, 168, 0.3);
+        }
+        
+        .my-applications-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 118, 168, 0.4);
+        }
+        
+        .my-applications-btn i {
+            font-size: 1.2em;
+        }
+        
+        /* Стили для попапа с заявками */
+        .applications-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .applications-popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .popup-content {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .applications-popup.show .popup-content {
+            transform: translateY(0);
+        }
+        
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        body.dark-theme .popup-header {
+            border-bottom-color: #4a5568;
+        }
+        
+        .popup-header h3 {
+            color: #333;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        body.dark-theme .popup-header h3 {
+            color: white;
+        }
+        
+        .popup-header i {
+            color: #999;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-theme .popup-header i {
+            color: #aaa;
+        }
+        
+        .popup-header i:hover {
+            color: #667eea;
+        }
+        
+        .application-item {
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        body.dark-theme .application-item {
+            background: #1e2a3a;
+            border-color: #4a5568;
+            color: #e0e0e0;
+        }
+        
+        .application-game {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+        
+        .application-school {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        body.dark-theme .application-school {
+            color: #aaa;
+        }
+        
+        .application-date {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .empty-applications {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+        
         /* Стили для модального окна подтверждения */
         .confirm-modal {
             position: fixed;
@@ -372,6 +684,11 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         
+        body.dark-theme .confirm-content {
+            background: #2c3e50;
+            color: white;
+        }
+        
         .confirm-modal.show .confirm-content {
             transform: translateY(0);
         }
@@ -395,11 +712,19 @@
             margin-bottom: 15px;
         }
         
+        body.dark-theme .confirm-title {
+            color: white;
+        }
+        
         .confirm-text {
             text-align: center;
             color: #666;
             margin-bottom: 25px;
             line-height: 1.5;
+        }
+        
+        body.dark-theme .confirm-text {
+            color: #aaa;
         }
         
         .confirm-buttons {
@@ -467,11 +792,21 @@
             color: #333;
         }
         
+        body.dark-theme .community-button {
+            background: #2c3e50;
+            border-color: #4a5568;
+            color: white;
+        }
+        
         .community-button:hover {
             transform: translateX(5px);
             border-color: #4a76a8;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             box-shadow: 0 5px 15px rgba(74, 118, 168, 0.2);
+        }
+        
+        body.dark-theme .community-button:hover {
+            background: #1e2a3a;
         }
         
         .community-button i:first-child {
@@ -493,9 +828,17 @@
             margin-bottom: 3px;
         }
         
+        body.dark-theme .community-button-content h4 {
+            color: white;
+        }
+        
         .community-button-content p {
             color: #666;
             font-size: 0.85em;
+        }
+        
+        body.dark-theme .community-button-content p {
+            color: #aaa;
         }
         
         .community-button .fa-chevron-right {
@@ -518,11 +861,21 @@
             border-top: 1px solid #e0e0e0;
         }
         
+        body.dark-theme .footer {
+            background: #1e2a3a;
+            border-top-color: #4a5568;
+            color: #aaa;
+        }
+        
         .footer p {
             color: #667eea;
             font-weight: 500;
             font-size: 0.95em;
             line-height: 1.4;
+        }
+        
+        body.dark-theme .footer p {
+            color: #90a4ae;
         }
         
         .footer i {
@@ -543,6 +896,54 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        /* Настройки звука */
+        .sound-settings {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            margin-top: 10px;
+        }
+        
+        .sound-settings label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        body.dark-theme .sound-settings label {
+            color: #aaa;
+        }
+        
+        .sound-toggle {
+            width: 50px;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sound-toggle.active {
+            background: #4caf50;
+        }
+        
+        .sound-toggle:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .sound-toggle.active:before {
+            left: 28px;
         }
         
         /* Адаптивность */
@@ -596,6 +997,17 @@
                 font-size: 0.7em;
             }
             
+            .theme-toggle {
+                top: 10px;
+                left: 10px;
+            }
+            
+            .theme-toggle button {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+            
             .confirm-buttons {
                 flex-direction: column;
             }
@@ -605,6 +1017,13 @@
 <body>
     <div class="container">
         <div class="header">
+            <!-- Переключатель темы -->
+            <div class="theme-toggle">
+                <button onclick="toggleTheme()" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            
             <!-- Индикатор состояния сервера -->
             <div class="server-status" id="serverStatus">
                 <div class="status-dot" id="statusDot"></div>
@@ -635,57 +1054,12 @@
                     <i class="fas fa-school"></i>
                     Выберите школу
                 </label>
-                <select id="school" class="compact-select">
-                    <option value="" disabled selected>🏫 Выберите школу</option>
-                    <option value="1">МБОУ "Средняя школа №1"</option>
-                    <option value="2">МБОУ "Средняя школа №2"</option>
-                    <option value="3">МБОУ "Средняя школа №3"</option>
-                    <option value="4">МБОУ "Гимназия №4"</option>
-                    <option value="5">МБОУ "Средняя школа №5"</option>
-                    <option value="6">МБОУ "Средняя школа №6"</option>
-                    <option value="7">МБОУ "Средняя школа №7"</option>
-                    <option value="8">МБОУ "Средняя школа №8 с углубленным изучением иностранных языков"</option>
-                    <option value="9">МБОУ "Средняя школа №9 им. Ю.А. Гагарина"</option>
-                    <option value="10">МБОУ "Средняя школа №10"</option>
-                    <option value="11">МБОУ "Средняя школа №12"</option>
-                    <option value="12">МБОУ "Средняя школа №13 им. Э.Д. Балтина"</option>
-                    <option value="13">МБОУ "Средняя школа №14"</option>
-                    <option value="14">МБОУ "Средняя школа №15"</option>
-                    <option value="15">МБОУ "Средняя школа №16"</option>
-                    <option value="16">МБОУ "Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова"</option>
-                    <option value="17">МБОУ "Центр образования №2 "Гнездово"</option>
-                    <option value="18">МБОУ "Средняя школа №19 им. Героя России Панова"</option>
-                    <option value="19">МБОУ "Лицей №1 им. академика Б.Н. Петрова"</option>
-                    <option value="20">МБОУ "Средняя школа №21 им. Н.И. Рыленкова"</option>
-                    <option value="21">МБОУ "Средняя школа №22"</option>
-                    <option value="22">МБОУ "Средняя школа №23"</option>
-                    <option value="23">МБОУ "Средняя школа №24"</option>
-                    <option value="24">МБОУ "Средняя школа №25"</option>
-                    <option value="25">МБОУ "Средняя школа №26 им. А.С. Пушкина"</option>
-                    <option value="26">МБОУ "Средняя школа №27 им. Э.А. Хиля"</option>
-                    <option value="27">МБОУ "Средняя школа №28"</option>
-                    <option value="28">МБОУ "Средняя школа №29 с углубленным изучением отдельных предметов"</option>
-                    <option value="29">МБОУ "Средняя школа №30 им. С.А. Железнова"</option>
-                    <option value="30">МБОУ "Средняя школа №31"</option>
-                    <option value="31">МБОУ "Центр образования №3 "Звездный"</option>
-                    <option value="32">МБОУ "Средняя школа №33"</option>
-                    <option value="33">МБОУ "Центр образования №4 "Перспектива"</option>
-                    <option value="34">МБОУ "Средняя школа №35"</option>
-                    <option value="35">МБОУ "Средняя школа №36"</option>
-                    <option value="36">МБОУ "Средняя школа №37"</option>
-                    <option value="37">МБОУ "Средняя школа №38"</option>
-                    <option value="38">МБОУ "Средняя школа №39"</option>
-                    <option value="39">МБОУ "Центр образования №1 "Академия детства"</option>
-                    <option value="40">МБОУ "Открытая (сменная) школа №1"</option>
-                    <option value="41">МБОУ "Открытая (сменная) школа №2"</option>
-                    <option value="42">МБОУ "Гимназия №1 им. Н.М. Пржевальского"</option>
-                    <option value="43">МБОУ "Многопрофильный лицей"</option>
-                    <!-- Новые школы -->
-                    <option value="44">МБОУ "Печерская средняя школа"</option>
-                    <option value="45">МБОУ "Стабенская средняя школа"</option>
-                    <option value="46">МБОУ "Гнездовская средняя школа"</option>
-                    <option value="47">МБОУ "Катынская средняя школа"</option>
-                </select>
+                <div class="school-search">
+                    <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Поиск школы..." oninput="filterSchools()">
+                </div>
+                <div class="schools-container" id="schoolsContainer">
+                    <!-- Школы будут загружены через JavaScript -->
+                </div>
             </div>
             
             <div class="form-group">
@@ -704,9 +1078,26 @@
                 </select>
             </div>
             
+            <!-- Настройки звука -->
+            <div class="sound-settings">
+                <label>
+                    <i class="fas fa-volume-up"></i>
+                    Звуковые уведомления
+                </label>
+                <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">
+                    <div class="sound-toggle-inner"></div>
+                </div>
+            </div>
+            
             <button class="btn-submit" onclick="checkBeforeSubmit()">
                 <i class="fas fa-paper-plane"></i>
                 Отправить
+            </button>
+            
+            <!-- Кнопка "Мои заявки" -->
+            <button class="my-applications-btn" onclick="showMyApplications()">
+                <i class="fas fa-list"></i>
+                Мои заявки
             </button>
         </div>
         
@@ -765,10 +1156,132 @@
         </div>
     </div>
 
+    <!-- Попап "Мои заявки" -->
+    <div id="applicationsPopup" class="applications-popup" onclick="hideApplicationsPopup(event)">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Мои заявки</h3>
+                <i class="fas fa-times" onclick="hideApplicationsPopup()"></i>
+            </div>
+            <div id="applicationsList">
+                <!-- Заявки будут загружены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <script>
         vkBridge.send('VKWebAppInit');
 
         const SERVER_URL = 'https://vk-school-app-server.onrender.com';
+        let selectedSchool = null;
+        let soundEnabled = true;
+        
+        // Массив школ для поиска и сортировки
+        const schools = [
+            { id: "1", name: "МБОУ \"Средняя школа №1\"" },
+            { id: "2", name: "МБОУ \"Средняя школа №2\"" },
+            { id: "3", name: "МБОУ \"Средняя школа №3\"" },
+            { id: "4", name: "МБОУ \"Гимназия №4\"" },
+            { id: "5", name: "МБОУ \"Средняя школа №5\"" },
+            { id: "6", name: "МБОУ \"Средняя школа №6\"" },
+            { id: "7", name: "МБОУ \"Средняя школа №7\"" },
+            { id: "8", name: "МБОУ \"Средняя школа №8 с углубленным изучением иностранных языков\"" },
+            { id: "9", name: "МБОУ \"Средняя школа №9 им. Ю.А. Гагарина\"" },
+            { id: "10", name: "МБОУ \"Средняя школа №10\"" },
+            { id: "11", name: "МБОУ \"Средняя школа №12\"" },
+            { id: "12", name: "МБОУ \"Средняя школа №13 им. Э.Д. Балтина\"" },
+            { id: "13", name: "МБОУ \"Средняя школа №14\"" },
+            { id: "14", name: "МБОУ \"Средняя школа №15\"" },
+            { id: "15", name: "МБОУ \"Средняя школа №16\"" },
+            { id: "16", name: "МБОУ \"Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова\"" },
+            { id: "17", name: "МБОУ \"Центр образования №2 \"Гнездово\"" },
+            { id: "18", name: "МБОУ \"Средняя школа №19 им. Героя России Панова\"" },
+            { id: "19", name: "МБОУ \"Лицей №1 им. академика Б.Н. Петрова\"" },
+            { id: "20", name: "МБОУ \"Средняя школа №21 им. Н.И. Рыленкова\"" },
+            { id: "21", name: "МБОУ \"Средняя школа №22\"" },
+            { id: "22", name: "МБОУ \"Средняя школа №23\"" },
+            { id: "23", name: "МБОУ \"Средняя школа №24\"" },
+            { id: "24", name: "МБОУ \"Средняя школа №25\"" },
+            { id: "25", name: "МБОУ \"Средняя школа №26 им. А.С. Пушкина\"" },
+            { id: "26", name: "МБОУ \"Средняя школа №27 им. Э.А. Хиля\"" },
+            { id: "27", name: "МБОУ \"Средняя школа №28\"" },
+            { id: "28", name: "МБОУ \"Средняя школа №29 с углубленным изучением отдельных предметов\"" },
+            { id: "29", name: "МБОУ \"Средняя школа №30 им. С.А. Железнова\"" },
+            { id: "30", name: "МБОУ \"Средняя школа №31\"" },
+            { id: "31", name: "МБОУ \"Центр образования №3 \"Звездный\"" },
+            { id: "32", name: "МБОУ \"Средняя школа №33\"" },
+            { id: "33", name: "МБОУ \"Центр образования №4 \"Перспектива\"" },
+            { id: "34", name: "МБОУ \"Средняя школа №35\"" },
+            { id: "35", name: "МБОУ \"Средняя школа №36\"" },
+            { id: "36", name: "МБОУ \"Средняя школа №37\"" },
+            { id: "37", name: "МБОУ \"Средняя школа №38\"" },
+            { id: "38", name: "МБОУ \"Средняя школа №39\"" },
+            { id: "39", name: "МБОУ \"Центр образования №1 \"Академия детства\"" },
+            { id: "40", name: "МБОУ \"Открытая (сменная) школа №1\"" },
+            { id: "41", name: "МБОУ \"Открытая (сменная) школа №2\"" },
+            { id: "42", name: "МБОУ \"Гимназия №1 им. Н.М. Пржевальского\"" },
+            { id: "43", name: "МБОУ \"Многопрофильный лицей\"" },
+            { id: "44", name: "МБОУ \"Печерская средняя школа\"" },
+            { id: "45", name: "МБОУ \"Стабенская средняя школа\"" },
+            { id: "46", name: "МБОУ \"Гнездовская средняя школа\"" },
+            { id: "47", name: "МБОУ \"Катынская средняя школа\"" }
+        ];
+
+        // Сортировка школ по алфавиту
+        schools.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+        // Загрузка школ в контейнер
+        function loadSchools() {
+            const container = document.getElementById('schoolsContainer');
+            container.innerHTML = '';
+            
+            schools.forEach(school => {
+                const div = document.createElement('div');
+                div.className = 'school-item';
+                div.textContent = school.name;
+                div.onclick = () => selectSchool(school.id, div);
+                container.appendChild(div);
+            });
+        }
+
+        // Фильтрация школ по поиску
+        function filterSchools() {
+            const searchText = document.getElementById('schoolSearch').value.toLowerCase();
+            const container = document.getElementById('schoolsContainer');
+            container.innerHTML = '';
+            
+            const filtered = schools.filter(school => 
+                school.name.toLowerCase().includes(searchText)
+            );
+            
+            filtered.forEach(school => {
+                const div = document.createElement('div');
+                div.className = 'school-item';
+                if (selectedSchool === school.id) {
+                    div.classList.add('selected');
+                }
+                div.textContent = school.name;
+                div.onclick = () => selectSchool(school.id, div);
+                container.appendChild(div);
+            });
+        }
+
+        // Выбор школы
+        function selectSchool(id, element) {
+            // Убираем выделение у всех
+            document.querySelectorAll('.school-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Выделяем выбранную
+            element.classList.add('selected');
+            selectedSchool = id;
+        }
+
+        // Получение выбранной школы
+        function getSelectedSchool() {
+            return selectedSchool;
+        }
 
         // Функция для обновления статуса сервера
         function updateServerStatus(status, text) {
@@ -785,6 +1298,93 @@
                 statusText.textContent = text || 'Ошибка сервера';
             } else {
                 statusText.textContent = text || 'Проверка сервера...';
+            }
+        }
+
+        // Функция для воспроизведения звука
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioCtx = new AudioContext();
+            
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'success') {
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(400, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'error') {
+                oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'warning') {
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+
+        // Функция для переключения темы
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-theme');
+            
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Загрузка сохранённой темы
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        // Функция для переключения звука
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const soundToggle = document.getElementById('soundToggle');
+            
+            if (soundEnabled) {
+                soundToggle.classList.add('active');
+                localStorage.setItem('sound', 'enabled');
+            } else {
+                soundToggle.classList.remove('active');
+                localStorage.setItem('sound', 'disabled');
+            }
+        }
+
+        // Загрузка настроек звука
+        function loadSoundSettings() {
+            const savedSound = localStorage.getItem('sound');
+            if (savedSound === 'disabled') {
+                soundEnabled = false;
+                document.getElementById('soundToggle').classList.remove('active');
+            } else {
+                document.getElementById('soundToggle').classList.add('active');
             }
         }
 
@@ -878,16 +1478,61 @@
             }
         }
 
+        // Функция для показа моих заявок
+        async function showMyApplications() {
+            try {
+                const user = await vkBridge.send('VKWebAppGetUserInfo');
+                const userGames = await getUserGames(user.id);
+                
+                const gameNames = {
+                    'ks_2x2': 'КС 2x2',
+                    'ks_5x5': 'КС 5x5',
+                    'dota': 'Дота 2',
+                    'minecraft': 'Майнкрафт',
+                    'roblox': 'Роблокс',
+                    'valorant': 'Валорант'
+                };
+                
+                const applicationsList = document.getElementById('applicationsList');
+                
+                if (userGames.length === 0) {
+                    applicationsList.innerHTML = '<div class="empty-applications">У вас пока нет заявок</div>';
+                } else {
+                    let html = '';
+                    userGames.forEach(gameId => {
+                        html += `
+                            <div class="application-item">
+                                <div class="application-game">${gameNames[gameId] || gameId}</div>
+                                <div class="application-school">Вы участвуете в этой игре</div>
+                                <div class="application-date">Заявка активна</div>
+                            </div>
+                        `;
+                    });
+                    applicationsList.innerHTML = html;
+                }
+                
+                document.getElementById('applicationsPopup').classList.add('show');
+            } catch (error) {
+                console.error("Ошибка получения заявок:", error);
+                showVKUIMessage("Не удалось загрузить заявки", "error");
+            }
+        }
+
+        function hideApplicationsPopup(event) {
+            if (!event || event.target.classList.contains('applications-popup')) {
+                document.getElementById('applicationsPopup').classList.remove('show');
+            }
+        }
+
         // Функция для проверки перед отправкой
         async function checkBeforeSubmit() {
-            const schoolSelect = document.getElementById("school");
+            const school = getSelectedSchool();
             const gameSelect = document.getElementById("game");
-            
-            const school = schoolSelect.value;
             const game = gameSelect.value;
             
             if (!school || !game) {
                 showVKUIMessage("Выберите школу и игру!", "warning");
+                playSound('warning');
                 return;
             }
             
@@ -906,6 +1551,7 @@
                 
                 if (participates) {
                     showVKUIMessage("Вы уже участвуете в этой игре! Выберите другую игру.", "warning");
+                    playSound('warning');
                     button.innerHTML = originalText;
                     button.disabled = false;
                     return;
@@ -936,13 +1582,15 @@
                 console.error("❌ Ошибка проверки:", error);
                 button.innerHTML = originalText;
                 button.disabled = false;
-                // В случае ошибки всё равно показываем подтверждение
                 document.getElementById('confirmModal').classList.add('show');
             }
         }
 
         // Вызываем пробуждение сервера сразу после загрузки страницы
         wakeUpServer();
+        loadSchools();
+        loadTheme();
+        loadSoundSettings();
 
         setInterval(() => {
             console.log("⏳ Поддержание сервера...");
@@ -988,11 +1636,9 @@
         }
 
         async function processSendData() {
-            const schoolSelect = document.getElementById("school");
+            const schoolId = getSelectedSchool();
+            const schoolText = document.querySelector('.school-item.selected')?.textContent || '';
             const gameSelect = document.getElementById("game");
-            
-            const school = schoolSelect.value;
-            const schoolText = schoolSelect.selectedOptions[0].text;
             const game = gameSelect.value;
             const gameText = gameSelect.selectedOptions[0].text;
             
@@ -1009,6 +1655,7 @@
                 const participates = await checkUserParticipation(user.id, game);
                 if (participates) {
                     showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
+                    playSound('warning');
                     button.innerHTML = originalText;
                     button.disabled = false;
                     hideConfirmModal();
@@ -1020,6 +1667,7 @@
                     phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
                 } catch (phoneError) {
                     showVKUIMessage("Для записи на турнир вам нужно поделиться телефоном", "warning");
+                    playSound('warning');
                     button.innerHTML = originalText;
                     button.disabled = false;
                     hideConfirmModal();
@@ -1029,7 +1677,7 @@
                 const payload = {
                     vk_id: user.id,
                     name: `${user.first_name} ${user.last_name}`,
-                    school_id: school,
+                    school_id: schoolId,
                     school_name: schoolText,
                     game_id: game,
                     game_name: gameText,
@@ -1049,14 +1697,18 @@
                 
                 if (result.status === "already_exists") {
                     showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
+                    playSound('warning');
                 } else if (result.google) {
                     showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
+                    playSound('success');
                 } else {
                     showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
+                    playSound('success');
                 }
                 
             } catch (error) {
                 showVKUIMessage("Ошибка. Попробуй ещё раз", "error");
+                playSound('error');
                 console.error(error);
             } finally {
                 button.innerHTML = originalText;

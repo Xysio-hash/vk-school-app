@@ -199,6 +199,11 @@
             border-left: 4px solid #f44336;
         }
         
+        .vk-message.info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
         .vk-message-content {
             display: flex;
             align-items: center;
@@ -227,6 +232,10 @@
         
         .vk-message.error .vk-message-icon {
             color: #f44336;
+        }
+        
+        .vk-message.info .vk-message-icon {
+            color: #2196f3;
         }
         
         .vk-message-text {
@@ -759,6 +768,8 @@
     <script>
         vkBridge.send('VKWebAppInit');
 
+        const SERVER_URL = 'https://vk-school-app-server.onrender.com';
+
         // Функция для обновления статуса сервера
         function updateServerStatus(status, text) {
             const statusDot = document.getElementById('statusDot');
@@ -783,8 +794,7 @@
                 console.log("⏳ Проверка сервера...");
                 updateServerStatus('checking', 'Проверка сервера...');
                 
-                // Пробуем подключиться к серверу
-                const response = await fetch("https://vk-school-app-server.onrender.com", {
+                await fetch(`${SERVER_URL}/`, {
                     method: 'HEAD',
                     mode: 'no-cors',
                     cache: 'no-cache'
@@ -793,9 +803,8 @@
                 console.log("✅ Сервер доступен");
                 updateServerStatus('active', 'Сервер готов');
                 
-                // Дополнительно проверяем Google Sheets
                 setTimeout(() => {
-                    fetch("https://vk-school-app-server.onrender.com/test-google", {
+                    fetch(`${SERVER_URL}/test-google`, {
                         method: 'HEAD',
                         mode: 'no-cors'
                     }).catch(() => {});
@@ -805,10 +814,9 @@
                 console.log("⚠️ Сервер просыпается...");
                 updateServerStatus('checking', 'Сервер просыпается...');
                 
-                // Даже если ошибка, сервер всё равно получил запрос и проснётся
                 setTimeout(async () => {
                     try {
-                        await fetch("https://vk-school-app-server.onrender.com", {
+                        await fetch(`${SERVER_URL}/`, {
                             method: 'HEAD',
                             mode: 'no-cors'
                         });
@@ -820,22 +828,22 @@
             }
         }
 
-        // Функция для проверки, участвует ли пользователь в игре
+        // Функция для проверки участия в игре
         async function checkUserParticipation(vkId, gameId) {
             try {
-                const response = await fetch(`https://vk-school-app-server.onrender.com/check-participation?user_id=${vkId}&game_id=${gameId}`);
+                const response = await fetch(`${SERVER_URL}/check-participation?user_id=${vkId}&game_id=${gameId}`);
                 const result = await response.json();
                 return result.participates;
             } catch (error) {
                 console.error("Ошибка проверки участия:", error);
-                return false; // В случае ошибки разрешаем отправку
+                return false;
             }
         }
 
         // Функция для получения всех игр пользователя
         async function getUserGames(vkId) {
             try {
-                const response = await fetch(`https://vk-school-app-server.onrender.com/user-games?user_id=${vkId}`);
+                const response = await fetch(`${SERVER_URL}/user-games?user_id=${vkId}`);
                 const result = await response.json();
                 return result.games || [];
             } catch (error) {
@@ -852,23 +860,21 @@
             const school = schoolSelect.value;
             const game = gameSelect.value;
             
-            // Проверка что выбраны школа и игра
             if (!school || !game) {
                 showVKUIMessage("Выберите школу и игру!", "warning");
                 return;
             }
             
+            const button = document.querySelector('.btn-submit');
+            const originalText = button.innerHTML;
+            
             try {
-                // Показываем загрузку
-                const button = document.querySelector('.btn-submit');
-                const originalText = button.innerHTML;
                 button.innerHTML = '<span class="loading"></span> Проверка...';
                 button.disabled = true;
                 
-                // Получаем данные пользователя для проверки
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
                 
-                // Проверяем, участвует ли пользователь в этой игре
+                // Проверяем участие в выбранной игре
                 const participates = await checkUserParticipation(user.id, game);
                 
                 if (participates) {
@@ -881,7 +887,6 @@
                 // Получаем список всех игр пользователя
                 const userGames = await getUserGames(user.id);
                 if (userGames.length > 0) {
-                    // Показываем пользователю, в каких играх он уже участвует
                     const gameNames = {
                         'ks_2x2': 'КС 2x2',
                         'ks_5x5': 'КС 5x5',
@@ -898,12 +903,12 @@
                 button.innerHTML = originalText;
                 button.disabled = false;
                 
-                // Показываем модальное окно подтверждения
                 document.getElementById('confirmModal').classList.add('show');
                 
             } catch (error) {
                 console.error("Ошибка проверки:", error);
-                // В случае ошибки всё равно показываем подтверждение
+                button.innerHTML = originalText;
+                button.disabled = false;
                 document.getElementById('confirmModal').classList.add('show');
             }
         }
@@ -911,39 +916,34 @@
         // Вызываем пробуждение сервера сразу после загрузки страницы
         wakeUpServer();
 
-        // Также будим сервер каждые 10 минут
         setInterval(() => {
             console.log("⏳ Поддержание сервера...");
-            fetch("https://vk-school-app-server.onrender.com", {
+            fetch(`${SERVER_URL}/`, {
                 method: 'HEAD',
                 mode: 'no-cors'
             }).catch(() => {});
         }, 10 * 60 * 1000);
 
-        // Функция для показа сообщения в стиле VKUI
         function showVKUIMessage(message, type = 'warning') {
             const messageBlock = document.getElementById('vkMessage');
             const messageText = document.getElementById('messageText');
             const messageIcon = document.querySelector('.vk-message-icon i');
             
             messageBlock.classList.remove('show', 'warning', 'success', 'error', 'info');
+            messageBlock.classList.add('show', type);
             
             if (type === 'info') {
-                messageBlock.classList.add('show', 'warning');
                 messageIcon.className = 'fas fa-info-circle';
                 document.querySelector('.vk-message-text strong').textContent = 'Информация';
-            } else {
-                messageBlock.classList.add('show', type);
-                if (type === 'warning') {
-                    messageIcon.className = 'fas fa-exclamation-triangle';
-                    document.querySelector('.vk-message-text strong').textContent = 'Внимание';
-                } else if (type === 'success') {
-                    messageIcon.className = 'fas fa-check-circle';
-                    document.querySelector('.vk-message-text strong').textContent = 'Успешно';
-                } else if (type === 'error') {
-                    messageIcon.className = 'fas fa-times-circle';
-                    document.querySelector('.vk-message-text strong').textContent = 'Ошибка';
-                }
+            } else if (type === 'warning') {
+                messageIcon.className = 'fas fa-exclamation-triangle';
+                document.querySelector('.vk-message-text strong').textContent = 'Внимание';
+            } else if (type === 'success') {
+                messageIcon.className = 'fas fa-check-circle';
+                document.querySelector('.vk-message-text strong').textContent = 'Успешно';
+            } else if (type === 'error') {
+                messageIcon.className = 'fas fa-times-circle';
+                document.querySelector('.vk-message-text strong').textContent = 'Ошибка';
             }
             
             messageText.textContent = message;
@@ -953,14 +953,12 @@
             }, 5000);
         }
 
-        // Функция для скрытия модального окна
         function hideConfirmModal(event) {
             if (!event || event.target.classList.contains('confirm-modal')) {
                 document.getElementById('confirmModal').classList.remove('show');
             }
         }
 
-        // Основная функция отправки данных
         async function processSendData() {
             const schoolSelect = document.getElementById("school");
             const gameSelect = document.getElementById("game");
@@ -979,7 +977,7 @@
                 
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
                 
-                // Дополнительная проверка перед отправкой
+                // Финальная проверка перед отправкой
                 const participates = await checkUserParticipation(user.id, game);
                 if (participates) {
                     showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
@@ -993,49 +991,4 @@
                 try {
                     phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
                 } catch (phoneError) {
-                    showVKUIMessage("Для записи на турнир вам нужно поделиться телефоном", "warning");
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                    hideConfirmModal();
-                    return;
-                }
-                
-                const payload = {
-                    vk_id: user.id,
-                    name: `${user.first_name} ${user.last_name}`,
-                    school_id: school,
-                    school_name: schoolText,
-                    game_id: game,
-                    game_name: gameText,
-                    phone: phoneData.phone_number,
-                    date: new Date().toISOString()
-                };
-                
-                const response = await fetch("https://vk-school-app-server.onrender.com/save", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                if (result.google) {
-                    showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
-                } else {
-                    showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
-                }
-                
-            } catch (error) {
-                showVKUIMessage("Ошибка. Попробуй ещё раз", "error");
-                console.error(error);
-            } finally {
-                button.innerHTML = originalText;
-                button.disabled = false;
-                hideConfirmModal();
-            }
-        }
-    </script>
-</body>
-</html>
+                    show

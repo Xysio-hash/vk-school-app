@@ -89,7 +89,6 @@ app.post('/save', async (req, res) => {
     console.log('📥 Получены данные:', newData);
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
-        // Приводим к строке для сравнения
         const existing = db.find(entry => 
             String(entry.vk_id) === String(newData.vk_id) && 
             entry.game_id === newData.game_id
@@ -136,7 +135,6 @@ app.get('/test-google', async (req, res) => {
     res.json({ success: result, message: result ? "✅ Google Sheets работает!" : "❌ Ошибка Google Sheets", testData });
 });
 
-// Проверка участия с приведением к строке и флагом ошибки
 app.get('/check-participation', (req, res) => {
     const { user_id, game_id } = req.query;
     console.log(`🔍 Проверка участия: user=${user_id}, game=${game_id}`);
@@ -154,7 +152,6 @@ app.get('/check-participation', (req, res) => {
     }
 });
 
-// Список игр пользователя (только id)
 app.get('/user-games', (req, res) => {
     const { user_id } = req.query;
     try {
@@ -169,7 +166,6 @@ app.get('/user-games', (req, res) => {
     }
 });
 
-// Полные заявки пользователя (для "Мои заявки")
 app.get('/user-applications', (req, res) => {
     const { user_id } = req.query;
     console.log(`🔍 Запрос заявок пользователя: ${user_id}`);
@@ -193,16 +189,13 @@ app.get('/user-applications', (req, res) => {
 
 // ========== АДМИН-ПАНЕЛЬ И РАССЫЛКА ==========
 
-// Хранилище отправленных уведомлений (чтобы не дублировать)
 const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
 if (!fs.existsSync(NOTIFICATIONS_FILE)) {
     fs.writeFileSync(NOTIFICATIONS_FILE, JSON.stringify([]));
 }
 
-// Твой VK ID (админ)
 const ADMIN_ID = '540480418';
 
-// Ссылки на Telegram чаты для каждой игры
 const GAME_LINKS = {
     'ks_2x2': 'https://t.me/+9BIv7lv9H01jODRi',
     'ks_5x5': 'https://t.me/+9BIv7lv9H01jODRi',
@@ -212,7 +205,6 @@ const GAME_LINKS = {
     'valorant': 'https://t.me/+nZdiu2duBlw0OWEy'
 };
 
-// Названия игр для сообщений
 const GAME_NAMES = {
     'ks_2x2': 'КС 2x2',
     'ks_5x5': 'КС 5x5',
@@ -222,47 +214,64 @@ const GAME_NAMES = {
     'valorant': 'Валорант'
 };
 
-// Функция для отправки уведомления через VK
 async function sendVKNotification(userId, gameId, eventDate) {
     try {
         const gameName = GAME_NAMES[gameId] || gameId;
         const gameLink = GAME_LINKS[gameId] || '#';
         
-        // Формируем сообщение
         const message = `Вы записались на турнир по "${gameName}", он проходит ${eventDate}, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - ${gameLink}`;
         
-        // Отправляем через VK API (нужен ключ доступа)
-        // ВАЖНО: Нужно создать ключ доступа в настройках приложения VK
+        console.log(`📨 Отправка уведомления для ${userId}`);
+        console.log(`📝 Текст сообщения: ${message}`);
+        console.log(`🔑 Токен: ${process.env.VK_API_TOKEN ? 'установлен' : 'ОТСУТСТВУЕТ'}`);
+        
+        const params = new URLSearchParams({
+            v: '5.131',
+            access_token: process.env.VK_API_TOKEN,
+            user_ids: userId,
+            message: message,
+            fragment: 'app54452043'
+        });
+        
         const response = await fetch('https://api.vk.com/method/notifications.sendMessage', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: new URLSearchParams({
-                v: '5.131',
-                access_token: process.env.VK_API_TOKEN,
-                user_ids: userId,
-                message: message,
-                fragment: 'app54452043'
-            })
+            body: params
         });
         
         const result = await response.json();
-        console.log(`📨 Уведомление для ${userId}:`, result);
-        return !result.error;
+        console.log(`📨 Полный ответ VK API:`, JSON.stringify(result, null, 2));
+        
+        if (result.error) {
+            console.error(`❌ Ошибка VK API:`, result.error);
+            return false;
+        }
+        
+        if (result.response && Array.isArray(result.response)) {
+            const status = result.response[0];
+            if (status.status === true) {
+                console.log(`✅ Уведомление успешно отправлено ${userId}`);
+                return true;
+            } else {
+                console.error(`❌ Ошибка отправки:`, status.error || 'неизвестная ошибка');
+                return false;
+            }
+        }
+        
+        return false;
     } catch (error) {
-        console.error('❌ Ошибка отправки уведомления:', error);
+        console.error('❌ Критическая ошибка:', error);
         return false;
     }
 }
 
-// Проверка, является ли пользователь админом
 app.get('/api/check-admin', (req, res) => {
     const { user_id } = req.query;
     res.json({ isAdmin: String(user_id) === ADMIN_ID });
 });
 
-// Получение статистики для админа
 app.get('/api/admin-stats', (req, res) => {
     const { admin_id } = req.query;
     
@@ -272,38 +281,28 @@ app.get('/api/admin-stats', (req, res) => {
     
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
-        const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
         
-        // Статистика по играм
         const gameStats = {};
         const usersByGame = {};
         
         db.forEach(entry => {
-            // Считаем количество заявок по играм
             gameStats[entry.game_id] = (gameStats[entry.game_id] || 0) + 1;
-            
-            // Собираем уникальных пользователей по играм
             if (!usersByGame[entry.game_id]) {
                 usersByGame[entry.game_id] = new Set();
             }
             usersByGame[entry.game_id].add(entry.vk_id);
         });
         
-        // Преобразуем Set в массивы
         const usersByGameArray = {};
         Object.keys(usersByGame).forEach(gameId => {
             usersByGameArray[gameId] = Array.from(usersByGame[gameId]);
         });
-        
-        // Информация о последних отправках
-        const lastNotifications = notifications.slice(-10).reverse();
         
         res.json({
             gameStats,
             usersByGame: usersByGameArray,
             totalUsers: new Set(db.map(e => e.vk_id)).size,
             totalApplications: db.length,
-            lastNotifications,
             games: GAME_NAMES
         });
         
@@ -313,11 +312,9 @@ app.get('/api/admin-stats', (req, res) => {
     }
 });
 
-// Отправка уведомлений участникам конкретной игры
 app.post('/api/send-notifications', async (req, res) => {
     const { admin_id, game_id, event_date } = req.body;
     
-    // Проверка админа
     if (String(admin_id) !== ADMIN_ID) {
         return res.status(403).json({ error: 'Доступ запрещён' });
     }
@@ -327,11 +324,9 @@ app.post('/api/send-notifications', async (req, res) => {
     }
     
     try {
-        // Получаем всех участников игры
         const db = JSON.parse(fs.readFileSync(DB_FILE));
         const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
         
-        // Уникальные пользователи для этой игры
         const gameUsers = db
             .filter(entry => entry.game_id === game_id)
             .map(entry => entry.vk_id);
@@ -340,7 +335,6 @@ app.post('/api/send-notifications', async (req, res) => {
         
         console.log(`📊 Найдено участников игры ${game_id}: ${uniqueUserIds.length}`);
         
-        // Проверяем, кому уже отправляли уведомление об этой игре на эту дату
         const notificationKey = `${game_id}_${event_date}`;
         const alreadySent = notifications
             .filter(n => n.key === notificationKey)
@@ -350,12 +344,10 @@ app.post('/api/send-notifications', async (req, res) => {
         
         console.log(`📨 Будет отправлено: ${usersToSend.length} уведомлений`);
         
-        // Отправляем уведомления
         const results = [];
         for (const userId of usersToSend) {
             const success = await sendVKNotification(userId, game_id, event_date);
             
-            // Сохраняем информацию об отправке
             notifications.push({
                 key: notificationKey,
                 user_id: userId,
@@ -366,15 +358,11 @@ app.post('/api/send-notifications', async (req, res) => {
             });
             
             results.push({ userId, success });
-            
-            // Небольшая задержка, чтобы не нагружать API
             await new Promise(resolve => setTimeout(resolve, 200));
         }
         
-        // Сохраняем обновлённый список уведомлений
         fs.writeFileSync(NOTIFICATIONS_FILE, JSON.stringify(notifications, null, 2));
         
-        // Считаем статистику отправки
         const successful = results.filter(r => r.success).length;
         const failed = results.filter(r => !r.success).length;
         
@@ -391,48 +379,6 @@ app.post('/api/send-notifications', async (req, res) => {
     } catch (error) {
         console.error('Ошибка при отправке уведомлений:', error);
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
-    }
-});
-
-// Получение истории отправок
-app.get('/api/notification-history', (req, res) => {
-    const { admin_id } = req.query;
-    
-    if (String(admin_id) !== ADMIN_ID) {
-        return res.status(403).json({ error: 'Доступ запрещён' });
-    }
-    
-    try {
-        const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
-        
-        // Группируем по ключу (игра + дата)
-        const grouped = {};
-        notifications.forEach(n => {
-            if (!grouped[n.key]) {
-                grouped[n.key] = {
-                    key: n.key,
-                    game_id: n.game_id,
-                    event_date: n.event_date,
-                    first_sent: n.sent_at,
-                    total: 0,
-                    successful: 0
-                };
-            }
-            grouped[n.key].total++;
-            if (n.success) {
-                grouped[n.key].successful++;
-            }
-        });
-        
-        res.json({
-            history: Object.values(grouped).sort((a, b) => 
-                new Date(b.first_sent) - new Date(a.first_sent)
-            )
-        });
-        
-    } catch (error) {
-        console.error('Ошибка получения истории:', error);
-        res.status(500).json({ error: true });
     }
 });
 

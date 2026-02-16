@@ -190,7 +190,250 @@ app.get('/user-applications', (req, res) => {
         res.json({ applications: [], error: true });
     }
 });
+// ========== АДМИН-ПАНЕЛЬ И РАССЫЛКА ==========
 
+// Хранилище отправленных уведомлений (чтобы не дублировать)
+const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
+if (!fs.existsSync(NOTIFICATIONS_FILE)) {
+    fs.writeFileSync(NOTIFICATIONS_FILE, JSON.stringify([]));
+}
+
+// Твой VK ID (админ)
+const ADMIN_ID = '540480418';
+
+// Ссылки на Telegram чаты для каждой игры
+const GAME_LINKS = {
+    'ks_2x2': 'https://t.me/+9BIv7lv9H01jODRi',
+    'ks_5x5': 'https://t.me/+9BIv7lv9H01jODRi',
+    'dota': 'https://t.me/+XXIwYCueQN02YWVi',
+    'minecraft': 'https://t.me/+wKTMh2pAt5U2MjI6',
+    'roblox': 'https://t.me/+Y-bhwlSanj4yNWQy',
+    'valorant': 'https://t.me/+nZdiu2duBlw0OWEy'
+};
+
+// Названия игр для сообщений
+const GAME_NAMES = {
+    'ks_2x2': 'КС 2x2',
+    'ks_5x5': 'КС 5x5',
+    'dota': 'Дота 2',
+    'minecraft': 'Майнкрафт',
+    'roblox': 'Роблокс',
+    'valorant': 'Валорант'
+};
+
+// Функция для отправки уведомления через VK
+async function sendVKNotification(userId, gameId, eventDate) {
+    try {
+        const gameName = GAME_NAMES[gameId] || gameId;
+        const gameLink = GAME_LINKS[gameId] || '#';
+        
+        // Формируем сообщение
+        const message = `Вы записались на турнир по "${gameName}", он проходит ${eventDate}, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - ${gameLink}`;
+        
+        // Отправляем через VK API (нужен ключ доступа)
+        // ВАЖНО: Нужно создать ключ доступа в настройках приложения VK
+        const response = await fetch('https://api.vk.com/method/notifications.sendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                v: '5.131',
+                access_token: process.env.VK_API_TOKEN,
+                user_ids: userId,
+                message: message,
+                fragment: 'app54452043'
+            })
+        });
+        
+        const result = await response.json();
+        console.log(`📨 Уведомление для ${userId}:`, result);
+        return !result.error;
+    } catch (error) {
+        console.error('❌ Ошибка отправки уведомления:', error);
+        return false;
+    }
+}
+
+// Проверка, является ли пользователь админом
+app.get('/api/check-admin', (req, res) => {
+    const { user_id } = req.query;
+    res.json({ isAdmin: String(user_id) === ADMIN_ID });
+});
+
+// Получение статистики для админа
+app.get('/api/admin-stats', (req, res) => {
+    const { admin_id } = req.query;
+    
+    if (String(admin_id) !== ADMIN_ID) {
+        return res.status(403).json({ error: 'Доступ запрещён' });
+    }
+    
+    try {
+        const db = JSON.parse(fs.readFileSync(DB_FILE));
+        const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
+        
+        // Статистика по играм
+        const gameStats = {};
+        const usersByGame = {};
+        
+        db.forEach(entry => {
+            // Считаем количество заявок по играм
+            gameStats[entry.game_id] = (gameStats[entry.game_id] || 0) + 1;
+            
+            // Собираем уникальных пользователей по играм
+            if (!usersByGame[entry.game_id]) {
+                usersByGame[entry.game_id] = new Set();
+            }
+            usersByGame[entry.game_id].add(entry.vk_id);
+        });
+        
+        // Преобразуем Set в массивы
+        const usersByGameArray = {};
+        Object.keys(usersByGame).forEach(gameId => {
+            usersByGameArray[gameId] = Array.from(usersByGame[gameId]);
+        });
+        
+        // Информация о последних отправках
+        const lastNotifications = notifications.slice(-10).reverse();
+        
+        res.json({
+            gameStats,
+            usersByGame: usersByGameArray,
+            totalUsers: new Set(db.map(e => e.vk_id)).size,
+            totalApplications: db.length,
+            lastNotifications,
+            games: GAME_NAMES
+        });
+        
+    } catch (error) {
+        console.error('Ошибка получения статистики:', error);
+        res.status(500).json({ error: true });
+    }
+});
+
+// Отправка уведомлений участникам конкретной игры
+app.post('/api/send-notifications', async (req, res) => {
+    const { admin_id, game_id, event_date } = req.body;
+    
+    // Проверка админа
+    if (String(admin_id) !== ADMIN_ID) {
+        return res.status(403).json({ error: 'Доступ запрещён' });
+    }
+    
+    if (!game_id || !event_date) {
+        return res.status(400).json({ error: 'Не указана игра или дата' });
+    }
+    
+    try {
+        // Получаем всех участников игры
+        const db = JSON.parse(fs.readFileSync(DB_FILE));
+        const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
+        
+        // Уникальные пользователи для этой игры
+        const gameUsers = db
+            .filter(entry => entry.game_id === game_id)
+            .map(entry => entry.vk_id);
+        
+        const uniqueUserIds = [...new Set(gameUsers)];
+        
+        console.log(`📊 Найдено участников игры ${game_id}: ${uniqueUserIds.length}`);
+        
+        // Проверяем, кому уже отправляли уведомление об этой игре на эту дату
+        const notificationKey = `${game_id}_${event_date}`;
+        const alreadySent = notifications
+            .filter(n => n.key === notificationKey)
+            .map(n => n.user_id);
+        
+        const usersToSend = uniqueUserIds.filter(id => !alreadySent.includes(id));
+        
+        console.log(`📨 Будет отправлено: ${usersToSend.length} уведомлений`);
+        
+        // Отправляем уведомления
+        const results = [];
+        for (const userId of usersToSend) {
+            const success = await sendVKNotification(userId, game_id, event_date);
+            
+            // Сохраняем информацию об отправке
+            notifications.push({
+                key: notificationKey,
+                user_id: userId,
+                game_id,
+                event_date,
+                sent_at: new Date().toISOString(),
+                success
+            });
+            
+            results.push({ userId, success });
+            
+            // Небольшая задержка, чтобы не нагружать API
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        // Сохраняем обновлённый список уведомлений
+        fs.writeFileSync(NOTIFICATIONS_FILE, JSON.stringify(notifications, null, 2));
+        
+        // Считаем статистику отправки
+        const successful = results.filter(r => r.success).length;
+        const failed = results.filter(r => !r.success).length;
+        
+        res.json({
+            success: true,
+            total: uniqueUserIds.length,
+            alreadySent: alreadySent.length,
+            sent: usersToSend.length,
+            successful,
+            failed,
+            results
+        });
+        
+    } catch (error) {
+        console.error('Ошибка при отправке уведомлений:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Получение истории отправок
+app.get('/api/notification-history', (req, res) => {
+    const { admin_id } = req.query;
+    
+    if (String(admin_id) !== ADMIN_ID) {
+        return res.status(403).json({ error: 'Доступ запрещён' });
+    }
+    
+    try {
+        const notifications = JSON.parse(fs.readFileSync(NOTIFICATIONS_FILE));
+        
+        // Группируем по ключу (игра + дата)
+        const grouped = {};
+        notifications.forEach(n => {
+            if (!grouped[n.key]) {
+                grouped[n.key] = {
+                    key: n.key,
+                    game_id: n.game_id,
+                    event_date: n.event_date,
+                    first_sent: n.sent_at,
+                    total: 0,
+                    successful: 0
+                };
+            }
+            grouped[n.key].total++;
+            if (n.success) {
+                grouped[n.key].successful++;
+            }
+        });
+        
+        res.json({
+            history: Object.values(grouped).sort((a, b) => 
+                new Date(b.first_sent) - new Date(a.first_sent)
+            )
+        });
+        
+    } catch (error) {
+        console.error('Ошибка получения истории:', error);
+        res.status(500).json({ error: true });
+    }
+});
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📊 Google Sheets ID: ${SPREADSHEET_ID}`);

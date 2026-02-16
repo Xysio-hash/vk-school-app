@@ -87,25 +87,38 @@ app.get('/', (req, res) => {
 app.post('/save', async (req, res) => {
     const newData = req.body;
     console.log('📥 Получены данные:', newData);
-    const db = JSON.parse(fs.readFileSync(DB_FILE));
-    const existing = db.find(entry => entry.vk_id === newData.vk_id && entry.game_id === newData.game_id);
-    if (existing) {
-        console.log('⚠️ Участник уже зарегистрирован на эту игру');
-        return res.json({ status: "already_exists", message: "Вы уже участвуете в этой игре", google: false });
-    }
-    db.push(newData);
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-    const saved = await saveToGoogleSheets(newData);
-    if (saved) {
-        res.json({ status: "saved", message: "Данные сохранены в Google Sheets", google: true });
-    } else {
-        res.json({ status: "saved", message: "Данные сохранены локально", google: false });
+    try {
+        const db = JSON.parse(fs.readFileSync(DB_FILE));
+        // Приводим к строке для сравнения
+        const existing = db.find(entry => 
+            String(entry.vk_id) === String(newData.vk_id) && 
+            entry.game_id === newData.game_id
+        );
+        if (existing) {
+            console.log('⚠️ Участник уже зарегистрирован на эту игру');
+            return res.json({ status: "already_exists", message: "Вы уже участвуете в этой игре", google: false });
+        }
+        db.push(newData);
+        fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+        const saved = await saveToGoogleSheets(newData);
+        if (saved) {
+            res.json({ status: "saved", message: "Данные сохранены в Google Sheets", google: true });
+        } else {
+            res.json({ status: "saved", message: "Данные сохранены локально", google: false });
+        }
+    } catch (error) {
+        console.error("Ошибка при сохранении:", error);
+        res.status(500).json({ status: "error", message: "Внутренняя ошибка сервера" });
     }
 });
 
 app.get('/stats', (req, res) => {
-    const db = JSON.parse(fs.readFileSync(DB_FILE));
-    res.json(db);
+    try {
+        const db = JSON.parse(fs.readFileSync(DB_FILE));
+        res.json(db);
+    } catch (error) {
+        res.status(500).json({ error: true, message: "Ошибка чтения базы" });
+    }
 });
 
 app.get('/test-google', async (req, res) => {
@@ -123,40 +136,55 @@ app.get('/test-google', async (req, res) => {
     res.json({ success: result, message: result ? "✅ Google Sheets работает!" : "❌ Ошибка Google Sheets", testData });
 });
 
+// Проверка участия с приведением к строке и флагом ошибки
 app.get('/check-participation', (req, res) => {
     const { user_id, game_id } = req.query;
+    console.log(`🔍 Проверка участия: user=${user_id}, game=${game_id}`);
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
-        const participant = db.find(entry => entry.vk_id === user_id && entry.game_id === game_id);
-        res.json({ participates: !!participant });
+        const participant = db.find(entry => 
+            String(entry.vk_id) === String(user_id) && 
+            entry.game_id === game_id
+        );
+        console.log(`📊 Результат: ${participant ? 'уже участвует' : 'не участвует'}`);
+        res.json({ participates: !!participant, error: false });
     } catch (error) {
+        console.error("Ошибка проверки участия:", error);
         res.json({ participates: false, error: true });
     }
 });
 
+// Список игр пользователя (только id)
 app.get('/user-games', (req, res) => {
     const { user_id } = req.query;
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
-        const userGames = db.filter(entry => entry.vk_id === user_id).map(entry => entry.game_id);
-        res.json({ games: userGames });
+        const userGames = db
+            .filter(entry => String(entry.vk_id) === String(user_id))
+            .map(entry => entry.game_id);
+        res.json({ games: userGames, error: false });
     } catch (error) {
+        console.error("Ошибка получения игр пользователя:", error);
         res.json({ games: [], error: true });
     }
 });
 
-// ✅ НОВЫЙ МАРШРУТ ДЛЯ ПОЛНЫХ ЗАЯВОК ПОЛЬЗОВАТЕЛЯ
+// Полные заявки пользователя (для "Мои заявки")
 app.get('/user-applications', (req, res) => {
     const { user_id } = req.query;
+    console.log(`🔍 Запрос заявок пользователя: ${user_id}`);
     try {
         const db = JSON.parse(fs.readFileSync(DB_FILE));
-        const userApps = db.filter(entry => entry.vk_id === user_id).map(app => ({
-            game_id: app.game_id,
-            game_name: app.game_name,
-            school_name: app.school_name,
-            date: app.date
-        }));
-        res.json({ applications: userApps });
+        const userApps = db
+            .filter(entry => String(entry.vk_id) === String(user_id))
+            .map(app => ({
+                game_id: app.game_id,
+                game_name: app.game_name,
+                school_name: app.school_name,
+                date: app.date
+            }));
+        console.log(`📊 Найдено заявок: ${userApps.length}`);
+        res.json({ applications: userApps, error: false });
     } catch (error) {
         console.error("Ошибка получения заявок пользователя:", error);
         res.json({ applications: [], error: true });

@@ -154,3 +154,26 @@ app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📊 Google Sheets ID: ${SPREADSHEET_ID}`);
 });
+// Проверка участия пользователя в конкретной игре
+app.get('/check-participation', (req, res) => {
+    const { user_id, game_id } = req.query;
+    const db = JSON.parse(fs.readFileSync(DB_FILE));
+    
+    const participant = db.find(entry => 
+        entry.vk_id === user_id && entry.game_id === game_id
+    );
+    
+    res.json({ participates: !!participant });
+});
+
+// Получение всех игр пользователя
+app.get('/user-games', (req, res) => {
+    const { user_id } = req.query;
+    const db = JSON.parse(fs.readFileSync(DB_FILE));
+    
+    const userGames = db
+        .filter(entry => entry.vk_id === user_id)
+        .map(entry => entry.game_id);
+    
+    res.json({ games: userGames });
+});

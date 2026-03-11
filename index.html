@@ -390,10 +390,11 @@
             font-size: 1.2em;
         }
         
-        /* ===== БЛОК ПОИСКА ШКОЛ (изначально скрыт) ===== */
+        /* ===== БЛОК ПОИСКА ШКОЛ (скрыт по умолчанию) ===== */
         .school-search-block {
             display: none;
             margin-top: 10px;
+            margin-bottom: 15px;
         }
         
         .school-search-block.show {
@@ -461,7 +462,65 @@
             color: white;
         }
         
-        /* ===== ВЫБОР ИГРЫ (исправленный для тёмной темы) ===== */
+        /* ===== КНОПКА ДРУГАЯ ШКОЛА ===== */
+        .other-school-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .other-school-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        /* ===== ПОЛЕ ДЛЯ РУЧНОГО ВВОДА ШКОЛЫ ===== */
+        .manual-school-block {
+            display: none;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .manual-school-block.show {
+            display: block;
+        }
+        
+        .manual-school-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        body.dark-theme .manual-school-input {
+            background: #2c3e50;
+            border-color: #4a5568;
+            color: white;
+        }
+        
+        .manual-school-input:focus {
+            outline: none;
+            border-color: #ff9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+        }
+        
+        /* ===== ВЫБОР ИГРЫ ===== */
         .compact-select {
             width: 100%;
             padding: 15px 20px;
@@ -1089,6 +1148,20 @@
                 <div class="schools-container" id="schoolsContainer"></div>
             </div>
             
+            <!-- Кнопка "Другая школа" (всегда видна) -->
+            <button class="other-school-btn" onclick="toggleManualSchool()">
+                <i class="fas fa-pen"></i>
+                Другая школа (ввести вручную)
+            </button>
+            
+            <!-- Блок для ручного ввода школы -->
+            <div id="manualSchoolBlock" class="manual-school-block">
+                <input type="text" class="manual-school-input" id="manualSchool" placeholder="Введите название вашей школы" oninput="clearSchoolSelection()">
+                <p style="font-size: 0.8em; color: #666; margin-top: 5px; margin-left: 5px;">
+                    <i class="fas fa-info-circle"></i> Введите полное название школы
+                </p>
+            </div>
+            
             <div class="form-group">
                 <label>
                     <i class="fas fa-gamepad"></i>
@@ -1208,6 +1281,7 @@
         let selectedSchoolId = null;
         let selectedSchoolName = '';
         let soundEnabled = true;
+        let isManualSchool = false; // Флаг, что используется ручной ввод
 
         // Массив школ (сортировка по алфавиту)
         const schools = [
@@ -1268,7 +1342,7 @@
             schools.forEach(school => {
                 const div = document.createElement('div');
                 div.className = 'school-item';
-                if (selectedSchoolId === school.id) {
+                if (selectedSchoolId === school.id && !isManualSchool) {
                     div.classList.add('selected');
                 }
                 div.textContent = school.name;
@@ -1290,7 +1364,7 @@
             filtered.forEach(school => {
                 const div = document.createElement('div');
                 div.className = 'school-item';
-                if (selectedSchoolId === school.id) {
+                if (selectedSchoolId === school.id && !isManualSchool) {
                     div.classList.add('selected');
                 }
                 div.textContent = school.name;
@@ -1299,7 +1373,7 @@
             });
         }
 
-        // Выбор школы
+        // Выбор школы из списка
         function selectSchool(id, name, element) {
             document.querySelectorAll('.school-item').forEach(el => {
                 el.classList.remove('selected');
@@ -1307,9 +1381,12 @@
             element.classList.add('selected');
             selectedSchoolId = id;
             selectedSchoolName = name;
+            isManualSchool = false;
             document.getElementById('selectedSchoolDisplay').textContent = name.length > 30 ? name.substring(0,30)+'…' : name;
-            // Закрываем блок поиска после выбора (опционально)
-            document.getElementById('schoolSearchBlock').classList.remove('show');
+            
+            // Очищаем и скрываем поле ручного ввода
+            document.getElementById('manualSchool').value = '';
+            document.getElementById('manualSchoolBlock').classList.remove('show');
         }
 
         // Открыть/закрыть блок поиска
@@ -1321,9 +1398,63 @@
             }
         }
 
-        // Получить выбранную школу
+        // Открыть/закрыть поле ручного ввода
+        function toggleManualSchool() {
+            const block = document.getElementById('manualSchoolBlock');
+            block.classList.toggle('show');
+            if (block.classList.contains('show')) {
+                document.getElementById('manualSchool').focus();
+                // Убираем выделение со школ
+                document.querySelectorAll('.school-item').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                selectedSchoolId = null;
+                selectedSchoolName = '';
+                isManualSchool = true;
+                document.getElementById('selectedSchoolDisplay').textContent = 'Выбрать школу';
+            } else {
+                document.getElementById('manualSchool').value = '';
+            }
+        }
+
+        // Очистить выбор школы при ручном вводе
+        function clearSchoolSelection() {
+            document.querySelectorAll('.school-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            selectedSchoolId = null;
+            selectedSchoolName = '';
+            isManualSchool = true;
+            const manualValue = document.getElementById('manualSchool').value.trim();
+            if (manualValue) {
+                document.getElementById('selectedSchoolDisplay').textContent = manualValue.length > 30 ? manualValue.substring(0,30)+'…' : manualValue;
+            } else {
+                document.getElementById('selectedSchoolDisplay').textContent = 'Выбрать школу';
+            }
+        }
+
+        // Получить выбранную школу (для отправки)
         function getSelectedSchool() {
-            return selectedSchoolId;
+            if (isManualSchool) {
+                const manualValue = document.getElementById('manualSchool').value.trim();
+                if (manualValue) {
+                    return manualValue; // Возвращаем название школы
+                } else {
+                    return null;
+                }
+            } else {
+                return selectedSchoolId; // Возвращаем ID школы
+            }
+        }
+
+        // Получить название школы для отправки
+        function getSelectedSchoolName() {
+            if (isManualSchool) {
+                const manualValue = document.getElementById('manualSchool').value.trim();
+                return manualValue || '';
+            } else {
+                return selectedSchoolName;
+            }
         }
 
         // Тема
@@ -1572,10 +1703,17 @@
 
         // Отправка данных
         async function processSendData() {
-            const schoolId = getSelectedSchool();
-            const schoolName = selectedSchoolName;
+            const schoolValue = getSelectedSchool();
+            const schoolName = getSelectedSchoolName();
             const game = document.getElementById('game').value;
             const gameText = document.getElementById('game').selectedOptions[0].text;
+            
+            if (!schoolValue || !schoolName) {
+                showVKUIMessage("Пожалуйста, укажите школу", "warning");
+                playSound('warning');
+                hideConfirmModal();
+                return;
+            }
             
             const btn = document.querySelector('.btn-submit');
             const orig = btn.innerHTML;
@@ -1610,7 +1748,7 @@
                 const payload = {
                     vk_id: user.id,
                     name: `${user.first_name} ${user.last_name}`,
-                    school_id: schoolId,
+                    school_id: isManualSchool ? "manual" : schoolValue,
                     school_name: schoolName,
                     game_id: game,
                     game_name: gameText,

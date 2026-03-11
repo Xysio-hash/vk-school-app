@@ -8,23 +8,12 @@
     <!-- VK Bridge -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     
-    <!-- VKUI styles и скрипты (опционально) -->
-    <link href="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.css" rel="stylesheet"/>
-    <script src="https://unpkg.com/@vkontakte/vkui@4.0.0/dist/vkui.js"></script>
-    
-    <!-- Google Fonts для красивого текста -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome для иконок -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        /* ===== ОСНОВНЫЕ СТИЛИ ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         body {
@@ -34,1854 +23,255 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            transition: background 0.3s ease;
-        }
-        
-        body.dark-theme {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
         }
         
         .container {
             width: 100%;
             max-width: 500px;
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            backdrop-filter: blur(10px);
-            animation: slideUp 0.5s ease;
-            transition: all 0.3s ease;
         }
         
-        body.dark-theme .container {
-            background: rgba(30, 30, 40, 0.95);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* ===== ШАПКА ===== */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 30px;
+            padding: 30px 20px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: background 0.3s ease;
-        }
-        
-        body.dark-theme .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         
         .header h1 {
-            font-size: 2em;
+            font-size: 1.8em;
             margin-bottom: 10px;
-            position: relative;
-            font-weight: 700;
         }
         
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-            position: relative;
-            font-weight: 300;
-        }
-        
-        .header i {
-            font-size: 3em;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        /* ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== */
-        .theme-toggle {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            z-index: 10;
-        }
-        
-        .theme-toggle button {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle button:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* ===== ИНДИКАТОР СЕРВЕРА ===== */
-        .server-status {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            z-index: 10;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ffd700;
-            animation: pulse 1.5s infinite;
-        }
-        
-        .status-dot.active {
-            background: #4caf50;
-            animation: none;
-        }
-        
-        .status-dot.error {
-            background: #f44336;
-            animation: none;
-        }
-        
-        .server-status span {
-            color: white;
-            font-weight: 500;
-        }
-        
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.1);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        /* ===== СООБЩЕНИЯ VKUI ===== */
-        .vk-message {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin: 15px 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border: 1px solid #e0e0e0;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        body.dark-theme .vk-message {
-            background: #2c3e50;
-            border-color: #4a5568;
-        }
-        
-        body.dark-theme .vk-message-text {
-            color: #e0e0e0;
-        }
-        
-        body.dark-theme .vk-message-text strong {
-            color: #fff;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .vk-message.show {
-            display: block;
-        }
-        
-        .vk-message.warning {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-        }
-        
-        body.dark-theme .vk-message.warning {
-            background: #4a3f2a;
-            border-left: 4px solid #ff9800;
-        }
-        
-        .vk-message.success {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-        }
-        
-        body.dark-theme .vk-message.success {
-            background: #2a3f2a;
-            border-left: 4px solid #4caf50;
-        }
-        
-        .vk-message.error {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-        }
-        
-        body.dark-theme .vk-message.error {
-            background: #3f2a2a;
-            border-left: 4px solid #f44336;
-        }
-        
-        .vk-message.info {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-        }
-        
-        body.dark-theme .vk-message.info {
-            background: #2a3f4a;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .vk-message-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .vk-message-icon {
-            font-size: 24px;
-            min-width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        body.dark-theme .vk-message-icon {
-            background: #1e2a3a;
-        }
-        
-        .vk-message.warning .vk-message-icon {
-            color: #ff9800;
-        }
-        
-        .vk-message.success .vk-message-icon {
-            color: #4caf50;
-        }
-        
-        .vk-message.error .vk-message-icon {
-            color: #f44336;
-        }
-        
-        .vk-message.info .vk-message-icon {
-            color: #2196f3;
-        }
-        
-        .vk-message-text {
-            flex: 1;
-            font-size: 1em;
-            line-height: 1.4;
-            color: #333;
-        }
-        
-        .vk-message-text strong {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 1.1em;
-        }
-        
-        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
         .content {
-            padding: 30px;
+            padding: 25px;
         }
         
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #333;
-            font-weight: 500;
-            font-size: 1.1em;
-        }
-        
-        body.dark-theme .form-group label {
-            color: #e0e0e0;
-        }
-        
-        .form-group label i {
-            margin-right: 10px;
-            color: #667eea;
-        }
-        
-        body.dark-theme .form-group label i {
-            color: #90a4ae;
-        }
-        
-        /* ===== КНОПКА ВЫБОРА ШКОЛЫ ===== */
-        .school-select-btn {
+        button {
             width: 100%;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 15px;
             border: none;
             border-radius: 15px;
             font-size: 1.1em;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             margin-bottom: 15px;
-        }
-        
-        .school-select-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .school-select-btn i {
-            font-size: 1.2em;
-        }
-        
-        /* ===== БЛОК ПОИСКА ШКОЛ (изначально скрыт) ===== */
-        .school-search-block {
-            display: none;
-            margin-top: 10px;
-        }
-        
-        .school-search-block.show {
-            display: block;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 1em;
             transition: all 0.3s ease;
-            background: white;
-            margin-bottom: 10px;
         }
         
-        body.dark-theme .search-input {
-            background: #2c3e50;
-            border-color: #4a5568;
-            color: white;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .schools-container {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            background: white;
-        }
-        
-        body.dark-theme .schools-container {
-            background: #2c3e50;
-            border-color: #4a5568;
-        }
-        
-        .school-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        body.dark-theme .school-item {
-            border-bottom-color: #4a5568;
-            color: #e0e0e0;
-        }
-        
-        .school-item:last-child {
-            border-bottom: none;
-        }
-        
-        .school-item:hover {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-        }
-        
-        .school-item.selected {
+        .school-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         
-        /* ===== ВЫБОР ИГРЫ (исправленный для тёмной темы) ===== */
-        .compact-select {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            background: white;
-            font-size: 1em;
-            color: #333;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            transition: all 0.3s ease;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-        }
-
-        body.dark-theme .compact-select {
-            background-color: #2c3e50;
-            border-color: #4a5568;
-            color: white;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2390a4ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-        }
-
-        .compact-select:hover {
-            border-color: #667eea;
-        }
-
-        .compact-select:focus {
-            outline: none;
-            border-color: #764ba2;
-            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
-        }
-
-        .compact-select option {
-            padding: 12px;
-            font-size: 1em;
-        }
-        
-        /* ===== КНОПКА ОТПРАВКИ ===== */
-        .btn-submit {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-            margin-bottom: 15px;
-        }
-        
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-        
-        .btn-submit i {
-            font-size: 1.2em;
-        }
-        
-        /* ===== КНОПКА МОИ ЗАЯВКИ ===== */
-        .my-applications-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4a76a8 0%, #6383a8 100%);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(74, 118, 168, 0.3);
-        }
-        
-        .my-applications-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(74, 118, 168, 0.4);
-        }
-        
-        .my-applications-btn i {
-            font-size: 1.2em;
-        }
-        
-        /* ===== КНОПКА АДМИНА ===== */
-        #adminButton {
-            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-            margin-top: 10px;
-            display: none;
-        }
-        
-        /* ===== НАСТРОЙКИ ЗВУКА ===== */
-        .sound-settings {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            margin: 15px 0;
-        }
-        
-        .sound-settings label {
-            font-size: 0.95em;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        body.dark-theme .sound-settings label {
-            color: #aaa;
-        }
-        
-        .sound-toggle {
-            width: 50px;
-            height: 24px;
-            background: #e0e0e0;
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .sound-toggle.active {
-            background: #4caf50;
-        }
-        
-        .sound-toggle:before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.3s ease;
-        }
-        
-        .sound-toggle.active:before {
-            left: 28px;
-        }
-        
-        /* ===== КНОПКИ СООБЩЕСТВ ===== */
-        .communities-section {
-            padding: 0 30px 30px 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .community-button {
-            width: 100%;
-            padding: 15px;
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        body.dark-theme .community-button {
-            background: #2c3e50;
-            border-color: #4a5568;
+        .other-btn {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
             color: white;
         }
         
-        .community-button:hover {
-            transform: translateX(5px);
-            border-color: #4a76a8;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            box-shadow: 0 5px 15px rgba(74, 118, 168, 0.2);
-        }
-        
-        body.dark-theme .community-button:hover {
-            background: #1e2a3a;
-        }
-        
-        .community-button i:first-child {
-            font-size: 2em;
-            color: #4a76a8;
-            margin-right: 15px;
-        }
-        
-        .community-button-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        .community-button-content h4 {
-            color: #333;
-            font-size: 1.1em;
-            margin-bottom: 3px;
-        }
-        
-        body.dark-theme .community-button-content h4 {
-            color: white;
-        }
-        
-        .community-button-content p {
-            color: #666;
-            font-size: 0.85em;
-        }
-        
-        body.dark-theme .community-button-content p {
-            color: #aaa;
-        }
-        
-        .community-button .fa-chevron-right {
-            color: #999;
-            font-size: 1.2em;
-            transition: transform 0.3s ease;
-        }
-        
-        .community-button:hover .fa-chevron-right {
-            transform: translateX(5px);
-            color: #4a76a8;
-        }
-        
-        /* ===== ФУТЕР ===== */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            color: #666;
-            font-size: 0.9em;
-            border-top: 1px solid #e0e0e0;
-        }
-        
-        body.dark-theme .footer {
-            background: #1e2a3a;
-            border-top-color: #4a5568;
-            color: #aaa;
-        }
-        
-        .footer p {
-            color: #667eea;
-            font-weight: 500;
-            font-size: 0.95em;
-            line-height: 1.4;
-        }
-        
-        body.dark-theme .footer p {
-            color: #90a4ae;
-        }
-        
-        .footer i {
-            color: #ff6b6b;
-            margin: 0 5px;
-        }
-        
-        /* ===== АНИМАЦИЯ ЗАГРУЗКИ ===== */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
-        .confirm-modal, .applications-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .confirm-modal.show, .applications-popup.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .confirm-content, .popup-content {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-        
-        body.dark-theme .confirm-content,
-        body.dark-theme .popup-content {
-            background: #2c3e50;
-            color: white;
-        }
-        
-        .confirm-modal.show .confirm-content,
-        .applications-popup.show .popup-content {
-            transform: translateY(0);
-        }
-        
-        .popup-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        body.dark-theme .popup-header {
-            border-bottom-color: #4a5568;
-        }
-        
-        .popup-header h3 {
-            color: #333;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-        
-        body.dark-theme .popup-header h3 {
-            color: white;
-        }
-        
-        .popup-header i {
-            color: #999;
-            cursor: pointer;
-            font-size: 1.5em;
-            transition: color 0.3s ease;
-        }
-        
-        body.dark-theme .popup-header i {
-            color: #aaa;
-        }
-        
-        .popup-header i:hover {
-            color: #667eea;
-        }
-        
-        .application-item {
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        body.dark-theme .application-item {
-            background: #1e2a3a;
-            border-color: #4a5568;
-            color: #e0e0e0;
-        }
-        
-        .application-game {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #667eea;
-        }
-        
-        .application-school {
-            font-size: 0.9em;
-            color: #666;
-        }
-        
-        body.dark-theme .application-school {
-            color: #aaa;
-        }
-        
-        .application-date {
-            font-size: 0.8em;
-            color: #999;
-            margin-top: 5px;
-        }
-        
-        .empty-applications {
-            text-align: center;
-            padding: 30px;
-            color: #999;
-        }
-        
-        .confirm-icon {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .confirm-icon i {
-            font-size: 4em;
-            color: #ff9800;
-            animation: pulse 2s infinite;
-        }
-        
-        .confirm-title {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-        }
-        
-        body.dark-theme .confirm-title {
-            color: white;
-        }
-        
-        .confirm-text {
-            text-align: center;
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        body.dark-theme .confirm-text {
-            color: #aaa;
-        }
-        
-        .confirm-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .confirm-btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .confirm-btn.yes {
+        .submit-btn {
             background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
             color: white;
         }
         
-        .confirm-btn.yes:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+            margin-bottom: 15px;
         }
         
-        .confirm-btn.no {
-            background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
-            color: white;
+        .hidden {
+            display: none;
         }
         
-        .confirm-btn.no:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
-        }
-        
-        /* ===== АДАПТАЦИЯ ПОД МАЛЕНЬКИЕ ЭКРАНЫ ===== */
-        @media (max-width: 480px) {
-            .container {
-                border-radius: 20px;
-            }
-            
-            .header {
-                padding: 30px 20px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.5em;
-            }
-            
-            .compact-select {
-                padding: 12px 15px;
-                font-size: 0.95em;
-            }
-            
-            .vk-message-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .footer p {
-                font-size: 0.85em;
-            }
-            
-            .communities-section {
-                padding: 0 20px 20px 20px;
-            }
-            
-            .community-button-content h4 {
-                font-size: 1em;
-            }
-            
-            .community-button-content p {
-                font-size: 0.8em;
-            }
-            
-            .server-status {
-                top: 10px;
-                right: 10px;
-                padding: 4px 10px;
-                font-size: 0.7em;
-            }
-            
-            .theme-toggle {
-                top: 10px;
-                left: 10px;
-            }
-            
-            .theme-toggle button {
-                width: 35px;
-                height: 35px;
-                font-size: 1em;
-            }
-            
-            .confirm-buttons {
-                flex-direction: column;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .header h1 {
-                font-size: 1.3em;
-            }
-            
-            .header p {
-                font-size: 0.9em;
-            }
-            
-            .btn-submit, .my-applications-btn, .school-select-btn {
-                padding: 12px;
-                font-size: 1em;
-            }
-            
-            .community-button {
-                padding: 12px;
-            }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            font-size: 0.9em;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <!-- Переключатель темы -->
-            <div class="theme-toggle">
-                <button onclick="toggleTheme()" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-            
-            <!-- Индикатор состояния сервера -->
-            <div class="server-status" id="serverStatus">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Проверка сервера...</span>
-            </div>
-            
-            <i class="fas fa-gamepad"></i>
             <h1>Школьные игры</h1>
             <p>Выбери игру и найди команду</p>
         </div>
         
-        <!-- Блок для сообщений VKUI -->
-        <div id="vkMessage" class="vk-message">
-            <div class="vk-message-content">
-                <div class="vk-message-icon">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="vk-message-text">
-                    <strong>Внимание</strong>
-                    <span id="messageText">Текст сообщения</span>
-                </div>
-            </div>
-        </div>
-        
         <div class="content">
-            <!-- Кнопка "Выбрать школу" -->
-            <button class="school-select-btn" onclick="toggleSchoolSearch()">
-                <i class="fas fa-school"></i>
-                <span id="selectedSchoolDisplay">Выбрать школу</span>
-                <i class="fas fa-chevron-down"></i>
+            <!-- Основная кнопка выбора школы -->
+            <button class="school-btn" onclick="toggleSchoolMode()" id="schoolMainBtn">
+                <span id="schoolBtnText">Выбрать школу</span>
             </button>
             
-            <!-- Блок поиска школ (скрыт по умолчанию) -->
-            <div id="schoolSearchBlock" class="school-search-block">
-                <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Поиск школы..." oninput="filterSchools()">
-                <div class="schools-container" id="schoolsContainer"></div>
-            </div>
+            <!-- Поле для ручного ввода (скрыто) -->
+            <input type="text" id="manualSchool" class="hidden" placeholder="Введите название школы">
             
-            <div class="form-group">
-                <label>
-                    <i class="fas fa-gamepad"></i>
-                    Выберите игру
-                </label>
-                <select id="game" class="compact-select">
-                    <option value="" disabled selected>🎮 Выберите игру</option>
-                    <option value="ks_2x2">🎮 КС (2x2)</option>
-                    <option value="ks_5x5">🎯 КС (5x5)</option>
-                    <option value="dota">⚔️ Дота 2</option>
-                    <option value="minecraft">⛏️ Майнкрафт</option>
-                    <option value="roblox">🎲 Роблокс</option>
-                    <option value="valorant">🔫 Валорант</option>
-                </select>
-            </div>
+            <!-- Кнопка переключения режима -->
+            <button class="other-btn" onclick="toggleSchoolMode()" id="toggleModeBtn">
+                Другая школа
+            </button>
             
-            <!-- Настройки звука -->
-            <div class="sound-settings">
-                <label>
-                    <i class="fas fa-volume-up"></i>
-                    Звуковые уведомления
-                </label>
-                <div class="sound-toggle active" id="soundToggle" onclick="toggleSound()"></div>
-            </div>
+            <!-- Выбор игры -->
+            <select id="game">
+                <option value="" disabled selected>Выберите игру</option>
+                <option value="ks_2x2">КС (2x2)</option>
+                <option value="ks_5x5">КС (5x5)</option>
+                <option value="dota">Дота 2</option>
+                <option value="minecraft">Майнкрафт</option>
+                <option value="roblox">Роблокс</option>
+                <option value="valorant">Валорант</option>
+            </select>
             
-            <button class="btn-submit" onclick="checkBeforeSubmit()">
-                <i class="fas fa-paper-plane"></i>
-                Отправить
+            <!-- Кнопка отправки -->
+            <button class="submit-btn" onclick="sendApplication()">
+                Отправить заявку
             </button>
             
             <!-- Кнопка "Мои заявки" -->
-            <button class="my-applications-btn" onclick="showMyApplications()">
-                <i class="fas fa-list"></i>
+            <button class="other-btn" onclick="showMyApps()">
                 Мои заявки
             </button>
-            
-            <!-- Кнопка для админа (будет видна только тебе) -->
-            <button class="my-applications-btn" id="adminButton" onclick="showAdminPanel()">
-                <i class="fas fa-crown"></i>
-                Админ-панель
-            </button>
-        </div>
-        
-        <!-- Прямые ссылки на сообщества -->
-        <div class="communities-section">
-            <a href="https://vk.com/colizeum_kolhoznaya" target="_blank" class="community-button">
-                <i class="fab fa-vk"></i>
-                <div class="community-button-content">
-                    <h4>Colizeum</h4>
-                    <p>Киберспортивное сообщество</p>
-                </div>
-                <i class="fas fa-chevron-right"></i>
-            </a>
-            
-            <a href="https://vk.com/cyberleague67" target="_blank" class="community-button">
-                <i class="fab fa-vk"></i>
-                <div class="community-button-content">
-                    <h4>КиберЛига</h4>
-                    <p>Киберспортивная секция</p>
-                </div>
-                <i class="fas fa-chevron-right"></i>
-            </a>
         </div>
         
         <div class="footer">
-            <p>
-                <i class="fas fa-clock"></i>
-                Если у вас долго грузится отправление, просим подождать пару минут или перезайти в приложение, сервера уже подгружаются!
-                <i class="fas fa-clock"></i>
-            </p>
-        </div>
-    </div>
-
-    <!-- Модальное окно подтверждения -->
-    <div id="confirmModal" class="confirm-modal" onclick="hideConfirmModal(event)">
-        <div class="confirm-content">
-            <div class="confirm-icon">
-                <i class="fas fa-question-circle"></i>
-            </div>
-            <div class="confirm-title">
-                Подтверждение
-            </div>
-            <div class="confirm-text" id="confirmText">
-                Вы уверены что ввели правильно данные и готовы продолжить?
-            </div>
-            <div class="confirm-buttons">
-                <button class="confirm-btn yes" onclick="processSendData()">
-                    <i class="fas fa-check"></i>
-                    Да, продолжить
-                </button>
-                <button class="confirm-btn no" onclick="hideConfirmModal()">
-                    <i class="fas fa-times"></i>
-                    Нет, проверить
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Попап "Мои заявки" -->
-    <div id="applicationsPopup" class="applications-popup" onclick="hideApplicationsPopup(event)">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h3>Мои заявки</h3>
-                <i class="fas fa-times" onclick="hideApplicationsPopup()"></i>
-            </div>
-            <div id="applicationsList">
-                <!-- Заявки будут загружены через JavaScript -->
-                <div class="empty-applications">Загрузка...</div>
-            </div>
+            <p>Если долго грузится, подождите минуту</p>
         </div>
     </div>
 
     <script>
+        // Инициализация VK Bridge
         vkBridge.send('VKWebAppInit');
-
+        
         const SERVER_URL = 'https://vk-school-app-server.onrender.com';
-        let selectedSchoolId = null;
-        let selectedSchoolName = '';
-        let soundEnabled = true;
-
-        // Массив школ (сортировка по алфавиту)
-        const schools = [
-            { id: "1", name: "МБОУ \"Средняя школа №1\"" },
-            { id: "2", name: "МБОУ \"Средняя школа №2\"" },
-            { id: "3", name: "МБОУ \"Средняя школа №3\"" },
-            { id: "4", name: "МБОУ \"Гимназия №4\"" },
-            { id: "5", name: "МБОУ \"Средняя школа №5\"" },
-            { id: "6", name: "МБОУ \"Средняя школа №6\"" },
-            { id: "7", name: "МБОУ \"Средняя школа №7\"" },
-            { id: "8", name: "МБОУ \"Средняя школа №8 с углубленным изучением иностранных языков\"" },
-            { id: "9", name: "МБОУ \"Средняя школа №9 им. Ю.А. Гагарина\"" },
-            { id: "10", name: "МБОУ \"Средняя школа №10\"" },
-            { id: "11", name: "МБОУ \"Средняя школа №12\"" },
-            { id: "12", name: "МБОУ \"Средняя школа №13 им. Э.Д. Балтина\"" },
-            { id: "13", name: "МБОУ \"Средняя школа №14\"" },
-            { id: "14", name: "МБОУ \"Средняя школа №15\"" },
-            { id: "15", name: "МБОУ \"Средняя школа №16\"" },
-            { id: "16", name: "МБОУ \"Средняя школа №17 им. Героя Российской Федерации А.Б. Буханова\"" },
-            { id: "17", name: "МБОУ \"Центр образования №2 \"Гнездово\"" },
-            { id: "18", name: "МБОУ \"Средняя школа №19 им. Героя России Панова\"" },
-            { id: "19", name: "МБОУ \"Лицей №1 им. академика Б.Н. Петрова\"" },
-            { id: "20", name: "МБОУ \"Средняя школа №21 им. Н.И. Рыленкова\"" },
-            { id: "21", name: "МБОУ \"Средняя школа №22\"" },
-            { id: "22", name: "МБОУ \"Средняя школа №23\"" },
-            { id: "23", name: "МБОУ \"Средняя школа №24\"" },
-            { id: "24", name: "МБОУ \"Средняя школа №25\"" },
-            { id: "25", name: "МБОУ \"Средняя школа №26 им. А.С. Пушкина\"" },
-            { id: "26", name: "МБОУ \"Средняя школа №27 им. Э.А. Хиля\"" },
-            { id: "27", name: "МБОУ \"Средняя школа №28\"" },
-            { id: "28", name: "МБОУ \"Средняя школа №29 с углубленным изучением отдельных предметов\"" },
-            { id: "29", name: "МБОУ \"Средняя школа №30 им. С.А. Железнова\"" },
-            { id: "30", name: "МБОУ \"Средняя школа №31\"" },
-            { id: "31", name: "МБОУ \"Центр образования №3 \"Звездный\"" },
-            { id: "32", name: "МБОУ \"Средняя школа №33\"" },
-            { id: "33", name: "МБОУ \"Центр образования №4 \"Перспектива\"" },
-            { id: "34", name: "МБОУ \"Средняя школа №35\"" },
-            { id: "35", name: "МБОУ \"Средняя школа №36\"" },
-            { id: "36", name: "МБОУ \"Средняя школа №37\"" },
-            { id: "37", name: "МБОУ \"Средняя школа №38\"" },
-            { id: "38", name: "МБОУ \"Средняя школа №39\"" },
-            { id: "39", name: "МБОУ \"Центр образования №1 \"Академия детства\"" },
-            { id: "40", name: "МБОУ \"Открытая (сменная) школа №1\"" },
-            { id: "41", name: "МБОУ \"Открытая (сменная) школа №2\"" },
-            { id: "42", name: "МБОУ \"Гимназия №1 им. Н.М. Пржевальского\"" },
-            { id: "43", name: "МБОУ \"Многопрофильный лицей\"" },
-            { id: "44", name: "МБОУ \"Печерская средняя школа\"" },
-            { id: "45", name: "МБОУ \"Стабенская средняя школа\"" },
-            { id: "46", name: "МБОУ \"Гнездовская средняя школа\"" },
-            { id: "47", name: "МБОУ \"Катынская средняя школа\"" }
-             { id: "48", name: "МБОУ \"Богородицкая средняя школа\"" }
-        ].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-
-        // Загрузка школ в контейнер
-        function loadSchools() {
-            const container = document.getElementById('schoolsContainer');
-            container.innerHTML = '';
+        let isManualMode = false;
+        
+        // Переключение между выбором из списка и ручным вводом
+        function toggleSchoolMode() {
+            const manualInput = document.getElementById('manualSchool');
+            const mainBtn = document.getElementById('schoolMainBtn');
+            const toggleBtn = document.getElementById('toggleModeBtn');
             
-            schools.forEach(school => {
-                const div = document.createElement('div');
-                div.className = 'school-item';
-                if (selectedSchoolId === school.id) {
-                    div.classList.add('selected');
-                }
-                div.textContent = school.name;
-                div.onclick = () => selectSchool(school.id, school.name, div);
-                container.appendChild(div);
-            });
-        }
-
-        // Фильтрация школ
-        function filterSchools() {
-            const searchText = document.getElementById('schoolSearch').value.toLowerCase();
-            const container = document.getElementById('schoolsContainer');
-            container.innerHTML = '';
-            
-            const filtered = schools.filter(school => 
-                school.name.toLowerCase().includes(searchText)
-            );
-            
-            filtered.forEach(school => {
-                const div = document.createElement('div');
-                div.className = 'school-item';
-                if (selectedSchoolId === school.id) {
-                    div.classList.add('selected');
-                }
-                div.textContent = school.name;
-                div.onclick = () => selectSchool(school.id, school.name, div);
-                container.appendChild(div);
-            });
-        }
-
-        // Выбор школы
-        function selectSchool(id, name, element) {
-            document.querySelectorAll('.school-item').forEach(el => {
-                el.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            selectedSchoolId = id;
-            selectedSchoolName = name;
-            document.getElementById('selectedSchoolDisplay').textContent = name.length > 30 ? name.substring(0,30)+'…' : name;
-            // Закрываем блок поиска после выбора (опционально)
-            document.getElementById('schoolSearchBlock').classList.remove('show');
-        }
-
-        // Открыть/закрыть блок поиска
-        function toggleSchoolSearch() {
-            const block = document.getElementById('schoolSearchBlock');
-            block.classList.toggle('show');
-            if (block.classList.contains('show')) {
-                document.getElementById('schoolSearch').focus();
-            }
-        }
-
-        // Получить выбранную школу
-        function getSelectedSchool() {
-            return selectedSchoolId;
-        }
-
-        // Тема
-        function toggleTheme() {
-            const body = document.body;
-            const themeToggle = document.getElementById('themeToggle');
-            body.classList.toggle('dark-theme');
-            if (body.classList.contains('dark-theme')) {
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
+            if (isManualMode) {
+                // Переключаемся на список
+                manualInput.classList.add('hidden');
+                mainBtn.innerHTML = '<span id="schoolBtnText">Выбрать школу</span>';
+                toggleBtn.textContent = 'Другая школа';
+                isManualMode = false;
             } else {
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
+                // Переключаемся на ручной ввод
+                manualInput.classList.remove('hidden');
+                mainBtn.innerHTML = '<span id="schoolBtnText">Введите название школы</span>';
+                toggleBtn.textContent = 'Выбрать из списка';
+                isManualMode = true;
             }
         }
-
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
-            }
-        }
-
-        // Звук
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const soundToggle = document.getElementById('soundToggle');
-            if (soundEnabled) {
-                soundToggle.classList.add('active');
-                localStorage.setItem('sound', 'enabled');
+        
+        // Получение названия школы
+        function getSchoolName() {
+            if (isManualMode) {
+                return document.getElementById('manualSchool').value.trim();
             } else {
-                soundToggle.classList.remove('active');
-                localStorage.setItem('sound', 'disabled');
+                return document.getElementById('schoolBtnText').textContent;
             }
         }
-
-        function loadSoundSettings() {
-            const savedSound = localStorage.getItem('sound');
-            if (savedSound === 'disabled') {
-                soundEnabled = false;
-                document.getElementById('soundToggle').classList.remove('active');
-            } else {
-                document.getElementById('soundToggle').classList.add('active');
-            }
-        }
-
-        function playSound(type) {
-            if (!soundEnabled) return;
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const audioCtx = new AudioContext();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                if (type === 'success') {
-                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.2);
-                } else if (type === 'error') {
-                    oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
-                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.2);
-                } else if (type === 'warning') {
-                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.2);
-                }
-            } catch (e) {
-                console.log("Аудио не поддерживается");
-            }
-        }
-
-        // Пробуждение сервера
-        async function wakeUpServer() {
-            try {
-                updateServerStatus('checking', 'Проверка сервера...');
-                const response = await fetch(`${SERVER_URL}/`, { method: 'GET', cache: 'no-cache' });
-                if (response.ok) {
-                    updateServerStatus('active', 'Сервер готов');
-                } else {
-                    throw new Error('Сервер не отвечает');
-                }
-            } catch (error) {
-                updateServerStatus('checking', 'Сервер просыпается...');
-                setTimeout(async () => {
-                    try {
-                        const retry = await fetch(`${SERVER_URL}/`, { method: 'GET', cache: 'no-cache' });
-                        if (retry.ok) updateServerStatus('active', 'Сервер готов');
-                    } catch (e) {
-                        updateServerStatus('checking', 'Сервер загружается...');
-                    }
-                }, 3000);
-            }
-        }
-
-        function updateServerStatus(status, text) {
-            const dot = document.getElementById('statusDot');
-            const span = document.getElementById('statusText');
-            dot.classList.remove('active', 'error');
-            if (status === 'active') {
-                dot.classList.add('active');
-                span.textContent = text || 'Сервер готов';
-            } else if (status === 'error') {
-                dot.classList.add('error');
-                span.textContent = text || 'Ошибка сервера';
-            } else {
-                span.textContent = text || 'Проверка сервера...';
-            }
-        }
-
-        // Проверка участия
-        async function checkUserParticipation(vkId, gameId) {
-            try {
-                const url = `${SERVER_URL}/check-participation?user_id=${vkId}&game_id=${gameId}`;
-                console.log("🔍 Проверка участия:", url);
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                console.log("📊 Результат проверки:", data);
-                if (data.error) {
-                    console.warn("⚠️ Сервер вернул ошибку, считаем что участие уже есть");
-                    return true;
-                }
-                return data.participates;
-            } catch (e) {
-                console.error("❌ Ошибка checkUserParticipation:", e);
-                return true;
-            }
-        }
-
-        // Получение заявок пользователя
-        async function getUserApplications(vkId) {
-            try {
-                const url = `${SERVER_URL}/user-applications?user_id=${vkId}`;
-                console.log("🔍 Запрос заявок:", url);
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                console.log("📊 Данные заявок:", data);
-                if (data.error) {
-                    console.warn("⚠️ Сервер вернул ошибку при получении заявок");
-                    return [];
-                }
-                return data.applications || [];
-            } catch (e) {
-                console.error("❌ Ошибка getUserApplications:", e);
-                return [];
-            }
-        }
-
-        // Показать мои заявки
-        async function showMyApplications() {
-            const listDiv = document.getElementById('applicationsList');
-            listDiv.innerHTML = '<div class="empty-applications">Загрузка...</div>';
-            document.getElementById('applicationsPopup').classList.add('show');
-            
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const apps = await getUserApplications(user.id);
-                
-                if (apps.length === 0) {
-                    listDiv.innerHTML = '<div class="empty-applications">У вас пока нет заявок</div>';
-                } else {
-                    let html = '';
-                    apps.forEach(app => {
-                        const date = new Date(app.date).toLocaleString('ru-RU', { 
-                            day: '2-digit', month: '2-digit', year: 'numeric', 
-                            hour: '2-digit', minute: '2-digit' 
-                        });
-                        html += `
-                            <div class="application-item">
-                                <div class="application-game">${app.game_name}</div>
-                                <div class="application-school">${app.school_name}</div>
-                                <div class="application-date">${date}</div>
-                            </div>
-                        `;
-                    });
-                    listDiv.innerHTML = html;
-                }
-            } catch (e) {
-                console.error("❌ Ошибка showMyApplications:", e);
-                listDiv.innerHTML = '<div class="empty-applications">Ошибка загрузки</div>';
-            }
-        }
-
-        function hideApplicationsPopup(e) {
-            if (!e || e.target.classList.contains('applications-popup')) {
-                document.getElementById('applicationsPopup').classList.remove('show');
-            }
-        }
-
-        // Проверка перед отправкой
-        async function checkBeforeSubmit() {
-            const school = getSelectedSchool();
+        
+        // Отправка заявки
+        async function sendApplication() {
+            const school = getSchoolName();
             const game = document.getElementById('game').value;
             
-            if (!school || !game) {
-                showVKUIMessage("Выберите школу и игру!", "warning");
-                playSound('warning');
+            if (!school || school === 'Выбрать школу' || school === 'Введите название школы') {
+                alert('Пожалуйста, выберите или введите школу');
                 return;
             }
             
-            const btn = document.querySelector('.btn-submit');
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<span class="loading"></span> Проверка...';
-            btn.disabled = true;
+            if (!game) {
+                alert('Пожалуйста, выберите игру');
+                return;
+            }
             
             try {
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const participates = await checkUserParticipation(user.id, game);
-                if (participates) {
-                    showVKUIMessage("Вы уже участвуете в этой игре! Выберите другую игру.", "warning");
-                    playSound('warning');
-                    btn.innerHTML = orig;
-                    btn.disabled = false;
-                    return;
-                }
-                btn.innerHTML = orig;
-                btn.disabled = false;
-                document.getElementById('confirmModal').classList.add('show');
-            } catch (e) {
-                console.error("❌ Ошибка checkBeforeSubmit:", e);
-                btn.innerHTML = orig;
-                btn.disabled = false;
-                document.getElementById('confirmModal').classList.add('show');
-            }
-        }
-
-        function hideConfirmModal(e) {
-            if (!e || e.target.classList.contains('confirm-modal')) {
-                document.getElementById('confirmModal').classList.remove('show');
-            }
-        }
-
-        // Отправка данных
-        async function processSendData() {
-            const schoolId = getSelectedSchool();
-            const schoolName = selectedSchoolName;
-            const game = document.getElementById('game').value;
-            const gameText = document.getElementById('game').selectedOptions[0].text;
-            
-            const btn = document.querySelector('.btn-submit');
-            const orig = btn.innerHTML;
-            
-            try {
-                btn.innerHTML = '<span class="loading"></span> Отправка...';
-                btn.disabled = true;
-                
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                
-                if (await checkUserParticipation(user.id, game)) {
-                    showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
-                    playSound('warning');
-                    btn.innerHTML = orig;
-                    btn.disabled = false;
-                    hideConfirmModal();
-                    return;
-                }
                 
                 let phoneData;
                 try {
-                    phoneData = await vkBridge.send("VKWebAppGetPhoneNumber");
+                    phoneData = await vkBridge.send('VKWebAppGetPhoneNumber');
                 } catch {
-                    showVKUIMessage("Для записи на турнир нужно поделиться телефоном", "warning");
-                    playSound('warning');
-                    btn.innerHTML = orig;
-                    btn.disabled = false;
-                    hideConfirmModal();
+                    alert('Для записи на турнир нужно поделиться телефоном');
                     return;
                 }
+                
+                const gameNames = {
+                    'ks_2x2': 'КС 2x2',
+                    'ks_5x5': 'КС 5x5',
+                    'dota': 'Дота 2',
+                    'minecraft': 'Майнкрафт',
+                    'roblox': 'Роблокс',
+                    'valorant': 'Валорант'
+                };
                 
                 const payload = {
                     vk_id: user.id,
                     name: `${user.first_name} ${user.last_name}`,
-                    school_id: schoolId,
-                    school_name: schoolName,
+                    school_name: school,
                     game_id: game,
-                    game_name: gameText,
+                    game_name: gameNames[game],
                     phone: phoneData.phone_number,
                     date: new Date().toISOString()
                 };
                 
-                const res = await fetch(`${SERVER_URL}/save`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await res.json();
-                console.log("📥 Ответ сервера /save:", result);
-                
-                if (result.status === "already_exists") {
-                    showVKUIMessage("Вы уже участвуете в этой игре!", "warning");
-                    playSound('warning');
-                } else if (result.google) {
-                    showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
-                    playSound('success');
-                } else {
-                    showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
-                    playSound('success');
-                }
-            } catch (e) {
-                console.error("❌ Ошибка отправки:", e);
-                showVKUIMessage("Ошибка. Попробуйте ещё раз", "error");
-                playSound('error');
-            } finally {
-                btn.innerHTML = orig;
-                btn.disabled = false;
-                hideConfirmModal();
-            }
-        }
-
-        function showVKUIMessage(msg, type) {
-            const block = document.getElementById('vkMessage');
-            const text = document.getElementById('messageText');
-            const icon = document.querySelector('.vk-message-icon i');
-            block.classList.remove('show', 'warning', 'success', 'error', 'info');
-            block.classList.add('show', type);
-            
-            const strong = document.querySelector('.vk-message-text strong');
-            if (type === 'info') {
-                icon.className = 'fas fa-info-circle';
-                strong.textContent = 'Информация';
-            } else if (type === 'warning') {
-                icon.className = 'fas fa-exclamation-triangle';
-                strong.textContent = 'Внимание';
-            } else if (type === 'success') {
-                icon.className = 'fas fa-check-circle';
-                strong.textContent = 'Успешно';
-            } else if (type === 'error') {
-                icon.className = 'fas fa-times-circle';
-                strong.textContent = 'Ошибка';
-            }
-            text.textContent = msg;
-            setTimeout(() => block.classList.remove('show'), 5000);
-        }
-
-        // ========== АДМИН-ПАНЕЛЬ ==========
-
-        async function checkIsAdmin() {
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const response = await fetch(`${SERVER_URL}/api/check-admin?user_id=${user.id}`);
-                const data = await response.json();
-                return data.isAdmin;
-            } catch (error) {
-                console.error('Ошибка проверки админа:', error);
-                return false;
-            }
-        }
-
-        async function showAdminPanel() {
-            const isAdmin = await checkIsAdmin();
-            if (!isAdmin) {
-                showVKUIMessage("У вас нет доступа к админ-панели", "warning");
-                return;
-            }
-            
-            const modal = document.createElement('div');
-            modal.className = 'confirm-modal show';
-            modal.id = 'adminModal';
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.remove();
-            };
-            
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const statsRes = await fetch(`${SERVER_URL}/api/admin-stats?admin_id=${user.id}`);
-                const stats = await statsRes.json();
-                
-                const gameOptions = Object.entries(stats.games).map(([id, name]) => {
-                    const count = stats.gameStats[id] || 0;
-                    return `<option value="${id}">${name} (${count} участников)</option>`;
-                }).join('');
-                
-                modal.innerHTML = `
-                    <div class="confirm-content" style="max-width: 500px;" onclick="event.stopPropagation()">
-                        <div class="popup-header">
-                            <h3>👑 Админ-панель</h3>
-                            <i class="fas fa-times" onclick="this.closest('.confirm-modal').remove()"></i>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <div style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); padding: 15px; border-radius: 15px; margin-bottom: 15px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>Всего заявок:</span>
-                                    <strong>${stats.totalApplications}</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Уникальных участников:</span>
-                                    <strong>${stats.totalUsers}</strong>
-                                </div>
-                            </div>
-                            
-                            <label style="display: block; margin-bottom: 10px; font-weight: 500;">
-                                <i class="fas fa-gamepad"></i> Выберите игру
-                            </label>
-                            <select id="adminGameSelect" class="compact-select" style="margin-bottom: 15px;">
-                                ${gameOptions}
-                            </select>
-                            
-                            <label style="display: block; margin-bottom: 10px; font-weight: 500;">
-                                <i class="fas fa-calendar"></i> Выберите дату и время турнира
-                            </label>
-                            <input type="datetime-local" id="eventDateTime" class="search-input" style="margin-bottom: 20px;">
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;" id="previewMessage">
-                            <div style="background: #f0f0f0; padding: 15px; border-radius: 15px;">
-                                <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Предпросмотр сообщения:</div>
-                                <div id="messagePreview" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #e0e0e0;">
-                                    Вы записались на турнир по "КС 2x2", он проходит 25.12.2024 18:00, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - https://t.me/...
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="confirm-buttons">
-                            <button class="confirm-btn yes" onclick="sendNotifications()">
-                                <i class="fas fa-paper-plane"></i>
-                                Отправить уведомления
-                            </button>
-                            <button class="confirm-btn no" onclick="this.closest('.confirm-modal').remove()">
-                                <i class="fas fa-times"></i>
-                                Закрыть
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                document.getElementById('adminGameSelect').addEventListener('change', updatePreview);
-                document.getElementById('eventDateTime').addEventListener('change', updatePreview);
-                
-            } catch (error) {
-                console.error('Ошибка загрузки админ-панели:', error);
-                showVKUIMessage("Ошибка загрузки админ-панели", "error");
-            }
-        }
-
-        function updatePreview() {
-            const gameSelect = document.getElementById('adminGameSelect');
-            const dateInput = document.getElementById('eventDateTime');
-            const previewDiv = document.getElementById('messagePreview');
-            
-            if (!gameSelect || !dateInput || !previewDiv) return;
-            
-            const gameId = gameSelect.value;
-            const gameName = gameSelect.selectedOptions[0].text.split(' (')[0];
-            const eventDate = dateInput.value;
-            
-            const gameLinks = {
-                'ks_2x2': 'https://t.me/+9BIv7lv9H01jODRi',
-                'ks_5x5': 'https://t.me/+9BIv7lv9H01jODRi',
-                'dota': 'https://t.me/+XXIwYCueQN02YWVi',
-                'minecraft': 'https://t.me/+wKTMh2pAt5U2MjI6',
-                'roblox': 'https://t.me/+Y-bhwlSanj4yNWQy',
-                'valorant': 'https://t.me/+nZdiu2duBlw0OWEy'
-            };
-            
-            const link = gameLinks[gameId] || '#';
-            
-            let formattedDate = 'не указано';
-            if (eventDate) {
-                const date = new Date(eventDate);
-                formattedDate = date.toLocaleString('ru-RU', {
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                });
-            }
-            
-            previewDiv.innerHTML = `Вы записались на турнир по "${gameName}", он проходит ${formattedDate}, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - ${link}`;
-        }
-
-        async function sendNotifications() {
-            const gameSelect = document.getElementById('adminGameSelect');
-            const dateInput = document.getElementById('eventDateTime');
-            const modal = document.getElementById('adminModal');
-            
-            if (!gameSelect.value || !dateInput.value) {
-                showVKUIMessage("Выберите игру и дату!", "warning");
-                return;
-            }
-            
-            if (!confirm('Отправить уведомления всем участникам этой игры?')) {
-                return;
-            }
-            
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                
-                const response = await fetch(`${SERVER_URL}/api/send-notifications`, {
+                const response = await fetch(`${SERVER_URL}/save`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        admin_id: user.id,
-                        game_id: gameSelect.value,
-                        event_date: dateInput.value
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 const result = await response.json();
                 
-                if (result.error) {
-                    showVKUIMessage(`Ошибка: ${result.error}`, "error");
+                if (result.status === 'already_exists') {
+                    alert('Вы уже участвуете в этой игре!');
                 } else {
-                    showVKUIMessage(
-                        `✅ Уведомления отправлены!\nОтправлено: ${result.successful}\nУже получали: ${result.alreadySent}`,
-                        "success"
-                    );
-                    
-                    setTimeout(() => {
-                        if (modal) modal.remove();
-                    }, 2000);
+                    alert('✅ Заявка отправлена! Удачи в игре!');
                 }
                 
             } catch (error) {
-                console.error('Ошибка отправки:', error);
-                showVKUIMessage("Ошибка при отправке", "error");
+                alert('Ошибка при отправке. Попробуйте ещё раз');
+                console.error(error);
             }
         }
-
-        async function checkAdminOnLoad() {
+        
+        // Мои заявки (упрощенно)
+        async function showMyApps() {
             try {
                 const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const response = await fetch(`${SERVER_URL}/api/check-admin?user_id=${user.id}`);
+                const response = await fetch(`${SERVER_URL}/user-applications?user_id=${user.id}`);
                 const data = await response.json();
                 
-                if (data.isAdmin) {
-                    document.getElementById('adminButton').style.display = 'flex';
+                if (data.applications && data.applications.length > 0) {
+                    let message = 'Ваши заявки:\n';
+                    data.applications.forEach(app => {
+                        message += `\n🎮 ${app.game_name}\n🏫 ${app.school_name}\n`;
+                    });
+                    alert(message);
+                } else {
+                    alert('У вас пока нет заявок');
                 }
             } catch (error) {
-                console.error('Ошибка проверки админа:', error);
+                alert('Ошибка загрузки заявок');
             }
         }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            loadSchools();
-            loadTheme();
-            loadSoundSettings();
-            wakeUpServer();
-            checkAdminOnLoad();
-            setInterval(() => fetch(`${SERVER_URL}/`, { method: 'HEAD' }).catch(() => {}), 10 * 60 * 1000);
-        });
+        
+        // Проверка соединения с сервером
+        fetch(`${SERVER_URL}/`).catch(() => {});
     </script>
 </body>
 </html>

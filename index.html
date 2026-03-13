@@ -324,6 +324,139 @@
             font-size: 1.1em;
         }
         
+        /* ===== ПЛАШКА БЛАГОДАРНОСТИ ===== */
+        .thanks-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 15px 30px 30px 30px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+            display: none;
+            animation: slideUp 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-theme .thanks-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .thanks-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .thanks-card.show {
+            display: block;
+        }
+
+        .thanks-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .thanks-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .thanks-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .thanks-title {
+            color: white;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .thanks-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .thanks-text i {
+            margin: 0 5px;
+            font-size: 0.9em;
+            color: #ffd700;
+        }
+
+        .thanks-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            width: 100%;
+            backdrop-filter: blur(5px);
+        }
+
+        .thanks-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .thanks-button i {
+            font-size: 1.2em;
+        }
+
+        .thanks-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .thanks-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
         /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
         .content {
             padding: 30px;
@@ -1012,6 +1145,19 @@
             .confirm-buttons {
                 flex-direction: column;
             }
+
+            .thanks-card {
+                margin: 15px 20px 25px 20px;
+                padding: 20px;
+            }
+
+            .thanks-title {
+                font-size: 1.2em;
+            }
+
+            .thanks-text {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -1046,6 +1192,31 @@
                     <strong>Внимание</strong>
                     <span id="messageText">Текст сообщения</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Плашка благодарности после регистрации -->
+        <div id="thanksCard" class="thanks-card">
+            <button class="thanks-close" onclick="hideThanksCard()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="thanks-content">
+                <div class="thanks-header">
+                    <div class="thanks-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="thanks-title">Спасибо за регистрацию!</div>
+                    </div>
+                </div>
+                <div class="thanks-text">
+                    Следи за новостями и новыми акциями <i class="fas fa-fire"></i> нашего ПК клуба в Telegram
+                </div>
+                <a href="https://t.me/colizeum_kp67" target="_blank" class="thanks-button">
+                    <i class="fab fa-telegram-plane"></i>
+                    Перейти в Telegram
+                    <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
         
@@ -1236,6 +1407,21 @@
             { id: "46", name: "МБОУ \"Гнездовская средняя школа\"" },
             { id: "47", name: "МБОУ \"Катынская средняя школа\"" }
         ].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+        // Функции для работы с плашкой благодарности
+        function showThanksCard() {
+            const thanksCard = document.getElementById('thanksCard');
+            thanksCard.classList.add('show');
+            
+            // Автоматически скрыть через 15 секунд
+            setTimeout(() => {
+                thanksCard.classList.remove('show');
+            }, 15000);
+        }
+
+        function hideThanksCard() {
+            document.getElementById('thanksCard').classList.remove('show');
+        }
 
         // Загрузка школ в контейнер
         function loadSchools() {
@@ -1610,9 +1796,13 @@
                 } else if (result.google) {
                     showVKUIMessage("Твой выбор сохранён в Google таблицу! Удачи в игре!", "success");
                     playSound('success');
+                    // Показываем плашку благодарности после успешной регистрации
+                    showThanksCard();
                 } else {
                     showVKUIMessage("Твой выбор сохранён! Удачи в игре!", "success");
                     playSound('success');
+                    // Показываем плашку благодарности после успешной регистрации
+                    showThanksCard();
                 }
             } catch (e) {
                 console.error("❌ Ошибка отправки:", e);
@@ -1784,80 +1974,4 @@
                 });
             }
             
-            previewDiv.innerHTML = `Вы записались на турнир по "${gameName}", он проходит ${formattedDate}, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - ${link}`;
-        }
-
-        async function sendNotifications() {
-            const gameSelect = document.getElementById('adminGameSelect');
-            const dateInput = document.getElementById('eventDateTime');
-            const modal = document.getElementById('adminModal');
-            
-            if (!gameSelect.value || !dateInput.value) {
-                showVKUIMessage("Выберите игру и дату!", "warning");
-                return;
-            }
-            
-            if (!confirm('Отправить уведомления всем участникам этой игры?')) {
-                return;
-            }
-            
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                
-                const response = await fetch(`${SERVER_URL}/api/send-notifications`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        admin_id: user.id,
-                        game_id: gameSelect.value,
-                        event_date: dateInput.value
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.error) {
-                    showVKUIMessage(`Ошибка: ${result.error}`, "error");
-                } else {
-                    showVKUIMessage(
-                        `✅ Уведомления отправлены!\nОтправлено: ${result.successful}\nУже получали: ${result.alreadySent}`,
-                        "success"
-                    );
-                    
-                    setTimeout(() => {
-                        if (modal) modal.remove();
-                    }, 2000);
-                }
-                
-            } catch (error) {
-                console.error('Ошибка отправки:', error);
-                showVKUIMessage("Ошибка при отправке", "error");
-            }
-        }
-
-        async function checkAdminOnLoad() {
-            try {
-                const user = await vkBridge.send('VKWebAppGetUserInfo');
-                const response = await fetch(`${SERVER_URL}/api/check-admin?user_id=${user.id}`);
-                const data = await response.json();
-                
-                if (data.isAdmin) {
-                    document.getElementById('adminButton').style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Ошибка проверки админа:', error);
-            }
-        }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            loadSchools();
-            loadTheme();
-            loadSoundSettings();
-            wakeUpServer();
-            checkAdminOnLoad();
-            setInterval(() => fetch(`${SERVER_URL}/`, { method: 'HEAD' }).catch(() => {}), 10 * 60 * 1000);
-        });
-    </script>
-</body>
-</html>
+            previewDiv.innerHTML = `Вы записались

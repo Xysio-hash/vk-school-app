@@ -1345,8 +1345,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         vkBridge.send('VKWebAppInit');
 
         const SERVER_URL = 'https://vk-school-app-server.onrender.com';
@@ -1608,8 +1607,7 @@
                 span.textContent = text || 'Проверка сервера...';
             }
         }
-
-        // Проверка участия
+                // Проверка участия
         async function checkUserParticipation(vkId, gameId) {
             try {
                 const url = `${SERVER_URL}/check-participation?user_id=${vkId}&game_id=${gameId}`;
@@ -1732,8 +1730,7 @@
                 document.getElementById('confirmModal').classList.remove('show');
             }
         }
-
-        // Отправка данных
+                // Отправка данных
         async function processSendData() {
             const schoolId = getSelectedSchool();
             const schoolName = selectedSchoolName;
@@ -1839,8 +1836,7 @@
             text.textContent = msg;
             setTimeout(() => block.classList.remove('show'), 5000);
         }
-
-        // ========== АДМИН-ПАНЕЛЬ ==========
+                // ========== АДМИН-ПАНЕЛЬ ==========
 
         async function checkIsAdmin() {
             try {
@@ -1974,4 +1970,80 @@
                 });
             }
             
-            previewDiv.innerHTML = `Вы записались
+            previewDiv.innerHTML = `Вы записались на турнир по "${gameName}", он проходит ${formattedDate}, присоединяйтесь в нашу группу с участниками, чтобы окончательно завершить регистрацию - ${link}`;
+        }
+
+        async function sendNotifications() {
+            const gameSelect = document.getElementById('adminGameSelect');
+            const dateInput = document.getElementById('eventDateTime');
+            const modal = document.getElementById('adminModal');
+            
+            if (!gameSelect.value || !dateInput.value) {
+                showVKUIMessage("Выберите игру и дату!", "warning");
+                return;
+            }
+            
+            if (!confirm('Отправить уведомления всем участникам этой игры?')) {
+                return;
+            }
+            
+            try {
+                const user = await vkBridge.send('VKWebAppGetUserInfo');
+                
+                const response = await fetch(`${SERVER_URL}/api/send-notifications`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        admin_id: user.id,
+                        game_id: gameSelect.value,
+                        event_date: dateInput.value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    showVKUIMessage(`Ошибка: ${result.error}`, "error");
+                } else {
+                    showVKUIMessage(
+                        `✅ Уведомления отправлены!\nОтправлено: ${result.successful}\nУже получали: ${result.alreadySent}`,
+                        "success"
+                    );
+                    
+                    setTimeout(() => {
+                        if (modal) modal.remove();
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Ошибка отправки:', error);
+                showVKUIMessage("Ошибка при отправке", "error");
+            }
+        }
+
+        async function checkAdminOnLoad() {
+            try {
+                const user = await vkBridge.send('VKWebAppGetUserInfo');
+                const response = await fetch(`${SERVER_URL}/api/check-admin?user_id=${user.id}`);
+                const data = await response.json();
+                
+                if (data.isAdmin) {
+                    document.getElementById('adminButton').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Ошибка проверки админа:', error);
+            }
+        }
+
+        // Инициализация
+        window.addEventListener('load', () => {
+            loadSchools();
+            loadTheme();
+            loadSoundSettings();
+            wakeUpServer();
+            checkAdminOnLoad();
+            setInterval(() => fetch(`${SERVER_URL}/`, { method: 'HEAD' }).catch(() => {}), 10 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>
